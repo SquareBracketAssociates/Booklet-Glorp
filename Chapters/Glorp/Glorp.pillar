@@ -19,7 +19,7 @@ Glorp is a full-featured ORM which offers a number of features to reduce the ''i
 !!! Database server
 Before installing Glorp you should already have installed the RDBMS of your choice on your machine or a reacheable server, it could be *PostgreSQL (http://postgresql.org)>http://postgresql.org*, *MySQL (http://dev.mysql.com/)>http://dev.mysql.com/*, *SQLite (http://sqlite.org)>http://sqlite.org*, or any other of your preference (as long it is supported). Hereafter we will refer to this RDBMS of your choice as the ''Platform''.
 
-!!! Database Drivers
+!!! Database drivers
 Along with your working installation of your RDBMS you should have installed in
 your image the database drivers required to connect to the server.
 
@@ -28,9 +28,9 @@ With Native drivers the raw protocol is written in Smalltalk and it uses Pharo
 sockets to write and read the data from the wire. This has the advantage of
 being self contained, because you don't depend on an external file or setup
 to connect to a server. Also, because everything is written in Smalltalk
-it is debuggeable using Pharo tools down to a very low level.
+it is debuggable using Pharo tools down to a very low-level.
 
-!!!! Library Wrapper Drivers (FFI)
+!!!! Library wrapper drivers (FFI)
 Library Wrappers, as its name implies, wrap an underlying Operative System
 shared library like a ==.dll== or ==.so==, these wrappers will access
 the shared library functions by means of FFI
@@ -56,20 +56,20 @@ because all the implemented drivers will conform to the common Garage API.
 
 +Connectivity parts>file://figures/Glorp-UDBC.png|width=72|label=Garage diagram+
 
-!!!! Available Drivers
-There are many drivers available drivers in different version of Pharo, as
-the time of writing this these are the currently supported drivers
+!!!! Available drivers
+There are many drivers available drivers in different versions of Pharo, as
+the time of writing this, these are the currently supported drivers are:
 
 - Garage
---    PostgreSQL (Native)
---    MySQL (Native)
+-- PostgreSQL (Native)
+-- MySQL (Native)
+- UDBC SQLite3
 
-!!! Glorp Packages
-
+!!!! Glorp packages
 Glorp provides a Metacello configuration configured to load the core classes
 and/or its tests.
 
-[[[caption=Loading the default version
+[[[
 Metacello new
 	smalltalkhubUser: 'DBXTalk' project: 'Garage';
 	configuration: 'GarageGlorp';
@@ -77,49 +77,60 @@ Metacello new
 	load.
 ]]]
 
- One package is the ==Glorp-Core== and there is also a ==Glorp-Tests== package.
+It may be the case that you want to load Garage in an alpha version, in such case, you should load the most recent version instead of a stable version 
+that may be not defined for a alpha stream.
 
-!!! Glorp with UDBC / SQLite3
+One package is the ==Glorp-Core== and there is also a ==Glorp-Tests== package.
+
+!!!! Glorp with UDBC / SQLite3
 
 Glorp may also be configured to work directly with the UDBC SQLite3
 driver in Pharo 5 (instead of the Garage drivers):
 
-[[[caption=Load Glorp with UDBC / SQLite3
-    Gofer it   
-        smalltalkhubUser: 'TorstenBergmann' project: 'UDBC'; 
-        configuration; 
-        load. 
-        (Smalltalk at: #ConfigurationOfUDBC) loadBleedingEdge. 
-    
-    Gofer it 
-        smalltalkhubUser: 'DBXTalk' project: 'Garage'; 
-        configurationOf: 'GarageGlorp'; 
-        load. 
-        #ConfigurationOfGarageGlorp asClass project stableVersion load. 
-    
-    Gofer it 
-        smalltalkhubUser: 'DBXTalk' project: 'Glorp'; 
-        package: 'Glorp-SQLite3'; 
-        load. 
-    
-    GlorpSQLite3CIConfiguration new configureSqlite3. 
-    GlorpDemoTablePopulatorResource invalidateSetup.
+[[[
+Gofer it	 
+	smalltalkhubUser: 'TorstenBergmann' project: 'UDBC';
+	configuration; 
+	load.
+	(Smalltalk at: #ConfigurationOfUDBC) loadBleedingEdge.
+]]]
+[[[
+Gofer it 
+	smalltalkhubUser: 'DBXTalk' project: 'Garage';
+	configurationOf: 'GarageGlorp';
+	load. 
+	(Smalltalk at: #ConfigurationOfGarageGlorp) project stableVersion load.
+]]]
+
+[[[
+Gofer it 
+	smalltalkhubUser: 'DBXTalk' project: 'Glorp';
+	package: 'Glorp-SQLite3';
+	load.
+		
+	GlorpSQLite3CIConfiguration new configureSqlite3.
+	GlorpDemoTablePopulatorResource invalidateSetup.
 ]]]
 
 
-!!! Running the Tests
+!!!! Running the tests
 
-Having loaded the Database drivers and the Glorp packages, it is recommended to
+Having loaded the database drivers and the Glorp packages, it is recommended to
 run the unit tests of Glorp, to ensure everything was loaded correctly and it
 is working properly.
 
 !! Person: Our First Example Class
+
+
 To put some of the concepts described previously into practice we will create
 a ==Person== class and store it into a ==PERSON== database table,
 all from within the Pharo environment.
 
 !!! Class definition
-[[[caption=Defining our example class.
+
+Let us define a simple class.
+
+[[[
 Object subclass: #Person
 	instanceVariableNames: 'id firstName lastName birthDate'
 	classVariableNames: ''
@@ -127,35 +138,50 @@ Object subclass: #Person
 ]]]
 
 !!!Instance methods
-[[[caption=Accessors and initializers.
+
+Let us define some stupid methods. 
+[[[
 Person >> firstName: aString
-  firstName := aString
+	firstName := aString
 ]]]
 [[[
 Person >> firstName
-  ^ firstName
+	^ firstName
 ]]]
 [[[
 Person >> lastName: aString
-  lastName := aString
+	lastName := aString
 ]]]
 [[[
 Person >> lastName
-  ^lastName
+	^lastName
 ]]]
 [[[
 Person >> birthDate: aDate
-  birthDate := aDate
+	birthDate := aDate
 ]]]
 [[[
 Person >> birthDate
-  ^birthDate
+	^birthDate
 ]]]
 [[[
 Person >> initialize
-  super initialize.
-  birthDate := '1/1/1970' asDate
+	super initialize.
+	birthDate := '1/1/1970' asDate
 ]]]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 !! Defining a DescriptorSystem
 As you can see the above created class and methods, don't have anything
@@ -163,10 +189,10 @@ related to persistence and don't require you to inherit from a
 particular class.
 
 Glorp models all the involved concepts (such as tables, columns, classes, etc.)
-as first class objects, and then links
-instances of those objects in the ==DescriptorSystem==.
+as first class objects, and then links instances of those objects in a ==DescriptorSystem==.
 It is the core of a Glorp system, it holds all the Glorp metadata,
 such as the Tables, Descriptors and Class Models.
+
 
 By using a separate artifact (in this case, a class) to define all
 the metadata of your system, you can decouple your business models
@@ -181,10 +207,13 @@ where the persistence metadata is defined in the business domain class,
 and you can't reuse the same class for two different
 systems using different persistence configurations.
 
-All the definitions and mappings are defined in a subclass of
-==DescriptorSystem==, and for that we will create our own subclass.
 
-[[[caption=Our descriptor system class
+!!! Defining a DescriptorSystem subclass
+
+All the definitions and mappings are defined in a subclass of
+==DescriptorSystem==, and for that we will create our own subclass as follows:
+
+[[[
 DescriptorSystem subclass: #GlorpBookDescriptorSystem
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -200,12 +229,14 @@ the method naming. We will mention the conventions below.
 We start by describing the class ==Person==, and the way to
 do it is by defining a method with the pattern ==classModelFor''YourClass'':==.
 
-[[[caption=Describing the class model for the Person class.
+Here we describe the class model for the ==Person== class.
+
+[[[
 GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
-    aClassModel newAttributeNamed: #id.
-    aClassModel newAttributeNamed: #fistName.
-    aClassModel newAttributeNamed: #lastName.
-    aClassModel newAttributeNamed: #birthDate.
+	aClassModel newAttributeNamed: #id.
+	aClassModel newAttributeNamed: #fistName.
+	aClassModel newAttributeNamed: #lastName.
+	aClassModel newAttributeNamed: #birthDate
 ]]]
 
 Note that a class model is a Glorp representation of your domain class. Glorp uses it to
@@ -219,27 +250,30 @@ provide the description of the table in a similar way as with the class
 model, i.e., by following the ==tableFor''YOURTABLE''== convention.
 Please notice the upper case of the table name.
 
-[[[caption=Table model for PERSON table.
+Here is the definition of the table model for PERSON table.
+
+[[[
 GlorpBookDescriptorSystem >> tableForPERSON: aTable
-    (aTable createFieldNamed: 'id' type: platform serial)
-		 	bePrimaryKey.
-    aTable
-			createFieldNamed: 'firstName'
-			type: (platform varChar: 100).
-    aTable
-		 createFieldNamed: 'lastName'
-		 type: (platform varChar: 100).
-    aTable
-		 createFieldNamed: 'birthDate'
-		 type: platform date.
+	(aTable createFieldNamed: 'id' type: platform serial)
+		bePrimaryKey.
+	aTable
+		createFieldNamed: 'firstName'
+		type: (platform varChar: 100).
+	aTable
+		createFieldNamed: 'lastName'
+		type: (platform varChar: 100).
+	aTable
+		createFieldNamed: 'birthDate'
+		type: platform date.
 ]]]
 
 If the table name is not uppercase, it is necessary to add
-#allTableNames with the correct case, e.g.:
+the method ==allTableNames== with the correct case, e.g.:
 
-[[[caption=Non-uppercase table names
+For a non-uppercase table names we define the method ==allTableNames==.
+
+[[[
 GlorpBookDescriptorSystem >> allTableNames
-
 	"Return a list of all the table names that this system uses."
 	^#('Person')
 ]]]
@@ -249,39 +283,41 @@ The ''serial'' datatype, explained in detail below, is an autoincrementing
 integer datatype. Every time you save a new instance Glorp will obtain a
 new integer and assign it to your instance.
 
-!!!! Descriptor
+!!!! Expressing mappings
 Once we have the class model and the table object, we should define the mappings
 between the class attributes and the table fields.
+
 In this simple example we use a ==DirectMapping==, which is a class of
 mapping that takes the value in the column and assigns it to the attribute,
 and vice versa.
 
-[[[caption=Defining the mapping between the class and the table.
+Here is the definition of the mapping between the class and the table.
+
+[[[
 GlorpBookDescriptorSystem >> descriptorForPerson: aDescriptor
-    | table |
-    table := self tableNamed: 'PERSON'.
-    aDescriptor table: table.
-    aDescriptor directMappingFor: #id.
-    (aDescriptor newMapping: DirectMapping)
-        from: #firstName
-        to: (table fieldNamed: 'firstName').
-    (aDescriptor newMapping: DirectMapping)
-            from: #lastName
-            to: (table fieldNamed: 'lastName').
-    (aDescriptor newMapping: DirectMapping)
-        from: #birthDate
-        to: (table fieldNamed: 'birthDate')
+	| table |
+	table := self tableNamed: 'PERSON'.
+	aDescriptor table: table.
+	aDescriptor directMappingFor: #id.
+	(aDescriptor newMapping: DirectMapping)
+		from: #firstName
+		to: (table fieldNamed: 'firstName').
+	(aDescriptor newMapping: DirectMapping)
+		from: #lastName
+		to: (table fieldNamed: 'lastName').
+	(aDescriptor newMapping: DirectMapping)
+		from: #birthDate
+		to: (table fieldNamed: 'birthDate')
 ]]]
 
 In the above method we can see how the the descriptor ''links'' the class
 attribute to the field name.
 
 Although this is verbose and the advantages may not be visible in this simple example, here lies the
-power of the Glorp orthogonal descriptor system, you describe everything
-and then link all the parts the way you want without modifying your domain
-object.
+power of the Glorp orthogonal descriptor system, you describe everything and then
+ link all the parts the way you want without modifying your domain object.
 
-!!! Creating the Tables
+!!! Creating tables
 
 Assuming we haven't created the database tables externally, Glorp's metamodel
 allows you to perform DDL (''Data Definition Language'') commands such as
@@ -289,7 +325,7 @@ allows you to perform DDL (''Data Definition Language'') commands such as
 Pharo objects, and it can even determine when to run those.
 
 To do that we must first connect to the database. We will explain how to do so in the following sections.
-We will be using a PostgreSQL server running on the same host as our Pharo image. We will then create the Login object and a  ==DatabaseAccessor== for it to interact with the database.
+We will be using a PostgreSQL server running on the same host as our Pharo image. We will then create the Login object and a	==DatabaseAccessor== for it to interact with the database.
 
 !!! Database Accessor
 Glorp is programmed to be agnostic of the Smalltalk dialect and
@@ -301,30 +337,32 @@ own subclass of ==DatabaseAccessor==.
 We use the recommended accessor, which is the ''Garage'' accessor
 that is compatible with all the drivers supported by the library.
 
-To define it as the default driver we must evaluate once the following expression:
+To define it as the default driver we must execute once the following expression:
 
-[[[caption=Setting the default Driver.
+[[[
 "Run this once"
 GAGlorpDriver beGlorpDefaultDriver.
 ]]]
 
-!!! The Login
+!!! Login
 All the information necessary to connect to the database is defined in an instance of the
 ==Login== class. It is an abstraction for the connection parameters
 used to connect to the database server, like the ''Plaform'' used,
 hostname, port, username, password, database name and other parameters.
 
-[[[caption=Creating a login.
+
+Here is a login creation: 
+[[[
 login := Login new
-        database: PostgreSQLPlatform new;
-        username: 'postgres';
-        password: 'secret';
-        host: 'localhost';
-				port: '5432';
-				databaseName: 'glorpbook'.
+	database: PostgreSQLPlatform new;
+	username: 'postgres';
+	password: 'secret';
+	host: 'localhost';
+	port: '5432';
+	databaseName: 'glorpbook'.
 ]]]
 
-The accessor requires a ==Login== to establish a connection
+The database accessor requires an instance of the class ==Login== to establish a connection
 to the database server specified in the login, using the platform specified.
 
 [[[
@@ -338,44 +376,56 @@ the secret won't be stored in the image anymore. Note that if you want to
 use the same login instance for other connections, you must assign the
 password string again.
 
-[[[caption=Making your Login secure
+Here we declare a secure Login
+
+[[[
 login secure: true
 ]]]
 
 
-!!!!! Verifying the connectivity.
-If everything goes fine, then evaluating ==accessor isLoggedIn== should answer
-''true''. Another way to test it is performing a basic query like the following
+!!!! Verifying the connectivity.
+If everything goes fine, then executing ==accessor isLoggedIn== should answer
+''true''. 
+
+[[[
+accessor isLoggedIn
+>>> true
+]]]
+
+Another way to test it is performing a basic query like the following
 ==(accessor basicExecuteSQLString: 'SELECT 3+4') contents first first== should
 return ''7'' as the result; and yes, the ==contents first first== is dirty,
 but it is not meant to be used this way, we're doing it just to quickly verify that everything is working.
 
-!!! Session
+
+
+!!! Session object
 
 Once we're able to connect to the database we can start interacting with it using
 Glorp's objects. We will do that using an object that ''orchestrates''
  all the other objects, the ==GlorpSession==. The easiest way to get a
-session is to ask the ==DescriptorSystem== passing the ==Login==
+session is to ask the ==DescriptorSystem== passing the ==Login== instance
 instance as the argument.
 
-[[[caption=Accessing a session.
+Here is how we access a session
+[[[
 session := GlorpBookDescriptorSystem sessionForLogin: login.
 session login.
 ]]]
 
-!!! How the Parts Play Together
+!!!! How the Parts Play Together
 
 Let us look into the implementation of the method ==DescriptorSystem>>sessionForLogin:== to understand
 better how the parts interact.
 
-[[[caption=GlorpBookDescriptorSystem inherits this implementation.
+[[[
 DescriptorSystem class >> sessionForLogin: aGlorpLogin
 	| system session |
 	system := self forPlatform: aGlorpLogin database.
 	session := GlorpSession new.
 	session accessor: (DatabaseAccessor forLogin: aGlorpLogin).
 	session system: system.
-	^session
+	^ session
 ]]]
 
 First we get a ''system'' instantiating the receiver (in our case
@@ -393,12 +443,19 @@ Note we ask the abstract ==DatabaseAccessor== class to return a concrete
 instance for ''aGlorpLogin'', it will return an instance of the
 database accessor configured as default.
 
-!!!!! A note about the ''Platform''.
+!!!!! About the ''Platform''.
 
 In Glorp terminology a Platform is the RDBMS (for ''Relational Database
-Management System'') platform. The abstract class ==Platform== defines the
+Management System'') platform itself. The abstract class ==DatabasePlatform== defines the
 abstract methods to deal with differences of supported data types,
 test the support of certain features, and so on.
+
+In Pharo we have 
+==MySQLPlatform==, ==OraclePlatform==, ==PostgresPlatform==, ==SQLServerPlatform==, ==SQLite3Platform== and ==UDBCSQLite3Platform==
+as subclass of ==DatabasePlatform==.
+
+
+
 
 !!! Saving/Updating/Deleting Objects
 It is time to put to work all the classes and schema we just created. To do it
@@ -407,12 +464,12 @@ then read some of them back. We'll explain a little bit
 how Glorp decides what and when to ''INSERT'', ''UPDATE'' or ''DELETE'' an object using
 the concept of Unit of Work. But we should create the required tables first.
 
-!!! Creating Tables
+!!!! Creating Tables
 Now we have our working ''session'' object, we can perform our ''DDL'' queries
 extracting the data from the ''system'' and sending commands to
-the ''accessor''. But before we should evaluate the following to create the tables.
+the ''accessor''. But before we should execute the following to create the tables:
 
-[[[caption=Creating the required tables
+[[[
 session createTables
 ]]]
 
@@ -420,6 +477,7 @@ And ''voilà'', it will send the required commands to the database to create our
 sequences, constraints and so on.
 
 !!! Transactions and ''Unit of Work''
+
 If you worked with RDBMS's before, you know you can use transactions that
 detach you from immediate writes to the database files, and enable you to
 rollback (undo) your changes, or do a batch of changes and commit
@@ -433,23 +491,23 @@ the database transaction in sync with it.
 
 !!! Saving New Instances
 
-To save instances we should send the message ==register: anInstance== to a session.
+To save instances,  we should send the message ==register: anInstance== to a session.
 Note that this operation should occur within a Unit of Work using the message
 ==inUnitOfWorkDo:== as follows:
 
-[[[caption=Saving example instances of Person.
+[[[
 session inUnitOfWorkDo: [
-    {
-        (Person new
-					firstName: 'John'; lastName: 'Locke';
-					birthDate: '1704-08-29' asDate).
-        (Person new
-					firstName: 'John'; lastName: 'Malkovich';
-					birthDate: '1953-12-09' asDate).
-        (Person new
-					firstName: 'George'; lastName: 'Lucas';
-					birthDate: '1944-05-14' asDate)
-    } do: [ :each | session register: each ]
+	{
+		(Person new
+			firstName: 'John'; lastName: 'Locke';
+			birthDate: '1704-08-29' asDate).
+		(Person new
+			firstName: 'John'; lastName: 'Malkovich';
+			birthDate: '1953-12-09' asDate).
+		(Person new
+			firstName: 'George'; lastName: 'Lucas';
+			birthDate: '1944-05-14' asDate)
+	} do: [ :each | session register: each ]
 ].
 ]]]
 
@@ -457,7 +515,7 @@ As you can see, we didn't say if the instance needs to be inserted or updated,
 nor did we specify an ''id'' for each instance. The framework will determine that
 by ''registering'' the instance in the all-mighty ''session''.
 
-Note that if registering an object that was read in a previous unit of
+Note that if we are registering an object that was read in a previous unit of
 work, the object cannot be modified prior to registration in the current
 unit of work.
 
@@ -467,7 +525,8 @@ We can now read back some of the persisted instances. Again we use
 the session object, sending it the message ==read:== and the class as argument.
 This will return a collection of results.
 
-[[[caption=Read all instances of Person|language=smalltalk
+We will return all read all instances of ==Person==
+[[[
 session read: Person
 ]]]
 
@@ -509,12 +568,12 @@ in the context of a UnitOfWork using the message ==inUnitOfWorkDo:==.
 
 [[[caption=Updating an object read within a UnitOfWork
 session inUnitOfWorkDo: [
-    | person |
-    person := session
-								readOneOf: Person
-								where: [:each | each lastName = 'Locke'].
-    person birthDate: Date today.
-    ].
+	| person |
+	person := session
+		readOneOf: Person
+		where: [:each | each lastName = 'Locke'].
+	person birthDate: Date today.
+	].
 ]]]
 
 Note that to update an object accessed from the database does not require you to
@@ -532,22 +591,22 @@ object with the object you want to delete as argument.
 
 [[[caption=Deleting an object inside of a UnitOfWork
 session inUnitOfWorkDo: [
-    | person |
-    person := session
-								readOneOf: Person
-								where: [:each | each lastName = 'Locke'].
-    session delete: person
-    ].
+	| person |
+	person := session
+		readOneOf: Person
+		where: [:each | each lastName = 'Locke'].
+	session delete: person
+	].
 ]]]
 
 Another way to delete objects is passing a condition block.
 
 [[[caption=Delete using a where clause
 session inUnitOfWorkDo: [
-    session
-			delete: Person
-			where: [:each | each lastName = 'Locke'].
-    ].
+	session
+		delete: Person
+		where: [:each | each lastName = 'Locke'].
+	].
 ]]]
 
 You can delete an object without being inside of a UnitOfWork, this will
@@ -574,11 +633,11 @@ and the database updated since the unit of work failed.
 [[[caption=Updating an object read within a UnitOfWork
 session inUnitOfWorkDo: [
 	person := session
-							readOneOf: Person
-							where: [:each | each lastName = 'Locke'].
+		readOneOf: Person
+		where: [:each | each lastName = 'Locke'].
 	person lastName: 'Wayne'.
 	Error signal: 'This error will abort the Unit Of Work.'
-].
+]
 ]]]
 
 !!!! Managing the Transaction Manually
@@ -597,18 +656,18 @@ unit of work manually, you can do so by using the following messages:
 -==commitUnitOfWorkAndContinue==
 
 The first three have self-describing selectors, and can be using like in the referenced code script.
-
-[[[caption=Manual handling of the transaction
-  person := session
-							readOneOf: Person
-							where: [:each | each firstName = 'George'].
-  session beginUnitOfWork.
-  session delete: person.
-  session rollbackUnitOfWork.
-  session beginUnitOfWork.
-  person lastName: 'Lukas'.
-  session register: person.
-  session commitUnitOfWork.
+Manual handling of the transaction
+[[[
+	person := session
+		readOneOf: Person
+		where: [:each | each firstName = 'George'].
+	session beginUnitOfWork.
+	session delete: person.
+	session rollbackUnitOfWork.
+	session beginUnitOfWork.
+	person lastName: 'Lukas'.
+	session register: person.
+	session commitUnitOfWork.
 ]]]
 
 In the case of the message ==commitUnitOfWorkAndContinue== it needs some explanation,
@@ -621,23 +680,23 @@ It is useful for cases like batch loads or updates,
 where you want to commit changes every ''n'' instances or similar.
 
 [[[caption=Commiting and continuing the Unit Of Work
-  session beginUnitOfWork.
-  10 to: 99 do: [ :index |
-    session register: (
-    Person new
-      firstName: 'Sample';
-      lastName: index printString).
-    (index \\ 10) isZero ifTrue: [
-		  session commitUnitOfWorkAndContinue
-    ].
-  ].
-  session commitUnitOfWork.
+	session beginUnitOfWork.
+	10 to: 99 do: [ :index |
+		session register: (
+		Person new
+			firstName: 'Sample';
+			lastName: index printString).
+		(index \\ 10) isZero ifTrue: [
+			session commitUnitOfWorkAndContinue
+		].
+	].
+	session commitUnitOfWork.
 ]]]
 
 We can cleanup the sample instances by running:
 [[[caption=Delete using a where clause
 session inUnitOfWorkDo: [
-    session
+		session
 			delete: Person
 			where: [:each | each firstName = 'Sample'].
 ].
@@ -692,14 +751,14 @@ maintain order. We could map that order field to a pseudo-variable and use it in
 
 [[[caption=Example class model for our Person class
 GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
-  (aClassModel newAttributeNamed: #id) useDirectAccess: true.
-  aClassModel newAttributeNamed: #firstName.
-  aClassModel newAttributeNamed: #lastName.
-  aClassModel newAttributeNamed: #birthDate.
-  aClassModel newAttributeNamed: #email.
-  aClassModel newAttributeNamed: #address type: Address.
-  aClassModel newAttributeNamed: #invoices collectionOf: Invoice.
-  aClassModel newAttributeNamed: #counters from: String to: Integer.
+	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
+	aClassModel newAttributeNamed: #firstName.
+	aClassModel newAttributeNamed: #lastName.
+	aClassModel newAttributeNamed: #birthDate.
+	aClassModel newAttributeNamed: #email.
+	aClassModel newAttributeNamed: #address type: Address.
+	aClassModel newAttributeNamed: #invoices collectionOf: Invoice.
+	aClassModel newAttributeNamed: #counters from: String to: Integer.
 ]]]
 
 !!! Table Models
@@ -721,10 +780,10 @@ Let's bring back our example from the beginning:
 
 [[[caption=Table model for PERSON table
 GlorpBookDescriptorSystem >> tableForPERSON: aTable
-  (aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
-  aTable createFieldNamed: 'firstName' type: (platform varChar: 100).
-  aTable createFieldNamed: 'lastName' type: (platform varChar: 100).
-  aTable createFieldNamed: 'birthDate' type: platform date.
+	(aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
+	aTable createFieldNamed: 'firstName' type: (platform varChar: 100).
+	aTable createFieldNamed: 'lastName' type: (platform varChar: 100).
+	aTable createFieldNamed: 'birthDate' type: platform date.
 ]]]
 
 As you can see, you can add a field by sending ==createFieldNamed:type:== to
@@ -780,13 +839,13 @@ instance of ==Descriptor== on which you will configure the mappings.
 
 [[[caption=Example descriptor for our Person class.
 GlorpBookDescriptorSystem >> descriptorForPerson: aDescriptor
-  | table |
-  table := self tableNamed: 'PERSON'.
-  (aDescriptor newMapping: DirectMapping) from: #id to: (table fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping) from: #firstName to: (table fieldNamed: 'firstname').
-  "snip..."
-  (aDescriptor newMapping: OneToOneMapping) attributeName: #address.
-  (aDescriptor newMapping: ToManyMapping) attributeName: #invoices.
+	| table |
+	table := self tableNamed: 'PERSON'.
+	(aDescriptor newMapping: DirectMapping) from: #id to: (table fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping) from: #firstName to: (table fieldNamed: 'firstname').
+	"snip..."
+	(aDescriptor newMapping: OneToOneMapping) attributeName: #address.
+	(aDescriptor newMapping: ToManyMapping) attributeName: #invoices.
 ]]]
 
 As you can see, the usual practice is to get a reference to the tables involved
@@ -974,14 +1033,14 @@ instance is a good practice too.
 [[[caption=Initialization methods
 Person >> initialize
 	super initialize.
-  addresses := OrderedCollection new.
-  invoices := OrderedCollection new.
+	addresses := OrderedCollection new.
+	invoices := OrderedCollection new.
 ]]]
 
 [[[caption=Initialization methods
 Invoice >> initialize
-  super initialize.
-  items := OrderedCollection new.
+	super initialize.
+	items := OrderedCollection new.
 ]]]
 
 !!! Class Model Declarations
@@ -990,36 +1049,36 @@ domain model.
 
 [[[caption=Class Model Declarations
 GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
-  (aClassModel newAttributeNamed: #id) useDirectAccess: true.
-  aClassModel newAttributeNamed: #firstName.
-  aClassModel newAttributeNamed: #lastName.
-  aClassModel newAttributeNamed: #email.
-  aClassModel newAttributeNamed: #addresses collectionOf: Address.
-  aClassModel newAttributeNamed: #invoices collectionOf: Invoice.
+	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
+	aClassModel newAttributeNamed: #firstName.
+	aClassModel newAttributeNamed: #lastName.
+	aClassModel newAttributeNamed: #email.
+	aClassModel newAttributeNamed: #addresses collectionOf: Address.
+	aClassModel newAttributeNamed: #invoices collectionOf: Invoice.
 ]]]
 
 [[[
 GlorpBookDescriptorSystem >> classModelForAddress: aClassModel
-  (aClassModel newAttributeNamed: #id) useDirectAccess: true.
-  aClassModel newAttributeNamed: #street.
-  aClassModel newAttributeNamed: #zip
+	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
+	aClassModel newAttributeNamed: #street.
+	aClassModel newAttributeNamed: #zip
 ]]]
 
 [[[
 GlorpBookDescriptorSystem >> classModelForInvoice: aClassModel
-  (aClassModel newAttributeNamed: #id) useDirectAccess: true.
-  aClassModel newAttributeNamed: #issueDate.
-  aClassModel newAttributeNamed: #person type: Person.
-  aClassModel newAttributeNamed: #address type: Address.
-  aClassModel newAttributeNamed: #items collectionOf: InvoiceItem
+	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
+	aClassModel newAttributeNamed: #issueDate.
+	aClassModel newAttributeNamed: #person type: Person.
+	aClassModel newAttributeNamed: #address type: Address.
+	aClassModel newAttributeNamed: #items collectionOf: InvoiceItem
 ]]]
 
 [[[
 GlorpBookDescriptorSystem >> classModelForInvoiceItem: aClassModel
-  (aClassModel newAttributeNamed: #id) useDirectAccess: true.
-  aClassModel newAttributeNamed: #invoice type: Invoice.
-  aClassModel newAttributeNamed: #description.
-  aClassModel newAttributeNamed: #price
+	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
+	aClassModel newAttributeNamed: #invoice type: Invoice.
+	aClassModel newAttributeNamed: #description.
+	aClassModel newAttributeNamed: #price
 ]]]
 
 
@@ -1031,8 +1090,8 @@ Then we should declare the tables that represent our domain.
 GlorpBookDescriptorSystem >> tableForPERSON: aTable
 	(aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
 	aTable createFieldNamed: 'firstName' type: (platform varChar: 100).
-  aTable createFieldNamed: 'lastName' type: (platform varChar: 100).
-  aTable createFieldNamed: 'email' type: (platform varchar: 200).
+	aTable createFieldNamed: 'lastName' type: (platform varChar: 100).
+	aTable createFieldNamed: 'email' type: (platform varchar: 200).
 ]]]
 
 [[[
@@ -1054,12 +1113,12 @@ GlorpBookDescriptorSystem >> tableForINVOICE: aTable
 	addressField := aTable
 	 									createFieldNamed: 'address_id'
 										type: platform integer.
-  aTable
-  	addForeignKeyFrom: personField
-    to: ((self tableNamed: 'PERSON') fieldNamed: 'id').
-  aTable
-    addForeignKeyFrom: addressField
-    to: ((self tableNamed: 'ADDRESS') fieldNamed: 'id').
+	aTable
+		addForeignKeyFrom: personField
+		to: ((self tableNamed: 'PERSON') fieldNamed: 'id').
+	aTable
+		addForeignKeyFrom: addressField
+		to: ((self tableNamed: 'ADDRESS') fieldNamed: 'id').
 ]]]
 
 As you can see in our ''INVOICE'' table, we not only added fields, but also
@@ -1077,34 +1136,34 @@ and to this object we will ask for the field named ''id''.
 [[[
 GlorpBookDescriptorSystem >> tableForINVOICEITEM: aTable
 	| invoiceField |
-  (aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
-  invoiceField := aTable createFieldNamed: 'invoice_id' type: platform serial.
-  aTable createFieldNamed: 'description' type: (platform varchar: 150).
-  aTable createFieldNamed: 'price' type: platform decimal.
-  aTable createFieldNamed: 'position' type: platform integer.
-  aTable
-    addForeignKeyFrom: invoiceField
-    to: ((self tableNamed: 'INVOICE') fieldNamed: 'id').
+	(aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
+	invoiceField := aTable createFieldNamed: 'invoice_id' type: platform serial.
+	aTable createFieldNamed: 'description' type: (platform varchar: 150).
+	aTable createFieldNamed: 'price' type: platform decimal.
+	aTable createFieldNamed: 'position' type: platform integer.
+	aTable
+		addForeignKeyFrom: invoiceField
+		to: ((self tableNamed: 'INVOICE') fieldNamed: 'id').
 ]]]
 
 
 [[[
 GlorpBookDescriptorSystem >> tableForPERSON_ON_ADDRESS: aTable
-  | personField addressField |
+	| personField addressField |
 	personField := aTable
 										createFieldNamed: 'person_id'
 										type: platform integer.
-  addressField := aTable
+	addressField := aTable
 										createFieldNamed: 'address_id'
 										type: platform integer.
 	personField bePrimaryKey.
 	addressField bePrimaryKey.
-  aTable
-    addForeignKeyFrom: personField
-    to: ((self tableNamed: 'PERSON') fieldNamed: 'id').
-  aTable
-    addForeignKeyFrom: addressField
-    to: ((self tableNamed: 'ADDRESS') fieldNamed: 'id').
+	aTable
+		addForeignKeyFrom: personField
+		to: ((self tableNamed: 'PERSON') fieldNamed: 'id').
+	aTable
+		addForeignKeyFrom: addressField
+		to: ((self tableNamed: 'ADDRESS') fieldNamed: 'id').
 ]]]
 
 As you can see in the last method, we created a table model for the table
@@ -1120,17 +1179,17 @@ mapping between the class model (the domain model) and the table.
 [[[caption=Class descriptors
 GlorpBookDescriptorSystem >> descriptorForAddress: aDescriptor
 	| table |
-  table := self tableNamed: 'ADDRESS'.
-  aDescriptor table: table.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id
-    to: (table fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #street
-    to: (table fieldNamed: 'street').
-  (aDescriptor newMapping: DirectMapping)
-    from: #city
-    to: (table fieldNamed: 'zip').
+	table := self tableNamed: 'ADDRESS'.
+	aDescriptor table: table.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id
+		to: (table fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #street
+		to: (table fieldNamed: 'street').
+	(aDescriptor newMapping: DirectMapping)
+		from: #city
+		to: (table fieldNamed: 'zip').
 ]]]
 
 
@@ -1158,24 +1217,24 @@ new index.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForInvoice: aDescriptor
-  | table |
-  table := self tableNamed: 'INVOICE'.
-  aDescriptor table: table.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id
-    to: (table fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #issueDate
-    to: (table fieldNamed: 'issueDate').
-  (aDescriptor newMapping: OneToOneMapping)
-    attributeName: #person.
-  (aDescriptor newMapping: OneToOneMapping)
-    attributeName: #address.
-  (aDescriptor newMapping: ToManyMapping)
-    attributeName: #items;
-    orderBy: [:each |
+	| table |
+	table := self tableNamed: 'INVOICE'.
+	aDescriptor table: table.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id
+		to: (table fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #issueDate
+		to: (table fieldNamed: 'issueDate').
+	(aDescriptor newMapping: OneToOneMapping)
+		attributeName: #person.
+	(aDescriptor newMapping: OneToOneMapping)
+		attributeName: #address.
+	(aDescriptor newMapping: ToManyMapping)
+		attributeName: #items;
+		orderBy: [:each |
 			(each getTable: 'INVOICEITEM') getField: 'position'];
-    writeTheOrderField.
+		writeTheOrderField.
 ]]]
 
 The mapping for each invoice item is slightly different since an item is always
@@ -1185,20 +1244,20 @@ between Invoice and InvoiceItem bidirectional.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForInvoiceItem: aDescriptor
-  | table |
-  table := self tableNamed: 'INVOICEITEM'.
-  aDescriptor table: table.
+	| table |
+	table := self tableNamed: 'INVOICEITEM'.
+	aDescriptor table: table.
 	(aDescriptor newMapping: DirectMapping)
-    from: #id
-    to: (table fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #description
-    to: (table fieldNamed: 'description').
-  (aDescriptor newMapping: DirectMapping)
-    from: #price
-    to: (table fieldNamed: 'price').
-  (aDescriptor newMapping: OneToOneMapping)
-    attributeName: #invoice.
+		from: #id
+		to: (table fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #description
+		to: (table fieldNamed: 'description').
+	(aDescriptor newMapping: DirectMapping)
+		from: #price
+		to: (table fieldNamed: 'price').
+	(aDescriptor newMapping: OneToOneMapping)
+		attributeName: #invoice.
 ]]]
 
 
@@ -1207,35 +1266,35 @@ of what happens in the last lines.
 
 [[[caption=Class descriptors
 GlorpBookDescriptorSystem >> descriptorForPerson: aDescriptor
-  | table linkTable |
-  table := self tableNamed: 'PERSON'.
-  aDescriptor table: table.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id
-    to: (table fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #firstName
-    to: (table fieldNamed: 'firstName').
-  (aDescriptor newMapping: DirectMapping)
-    from: #lastName
-    to: (table fieldNamed: 'lastName').
-  (aDescriptor newMapping: DirectMapping)
-    from: #email
-    to: (table fieldNamed: 'email').
+	| table linkTable |
+	table := self tableNamed: 'PERSON'.
+	aDescriptor table: table.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id
+		to: (table fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #firstName
+		to: (table fieldNamed: 'firstName').
+	(aDescriptor newMapping: DirectMapping)
+		from: #lastName
+		to: (table fieldNamed: 'lastName').
+	(aDescriptor newMapping: DirectMapping)
+		from: #email
+		to: (table fieldNamed: 'email').
 
-  (aDescriptor newMapping: ToManyMapping)
-    attributeName: #invoices;
-    orderBy: [:each |
+	(aDescriptor newMapping: ToManyMapping)
+		attributeName: #invoices;
+		orderBy: [:each |
 			(each getTable: 'INVOICE') getField: 'issueDate'].
 
-  linkTable := self tableNamed: 'PERSON_ON_ADDRESS'.
-  (aDescriptor newMapping: ManyToManyMapping)
-    attributeName: #addresses;
-    referenceClass: Address;
-    beExclusive;
-    join: (Join
-      from: (table fieldNamed: 'id')
-      to: (linkTable fieldNamed: 'person_id')).
+	linkTable := self tableNamed: 'PERSON_ON_ADDRESS'.
+	(aDescriptor newMapping: ManyToManyMapping)
+		attributeName: #addresses;
+		referenceClass: Address;
+		beExclusive;
+		join: (Join
+			from: (table fieldNamed: 'id')
+			to: (linkTable fieldNamed: 'person_id')).
 ]]]
 
 Here we introduce the explicit ==join:== attribute of the Reference Mapping.
@@ -1264,11 +1323,11 @@ session inUnitOfWorkDo: [
 									lastName: lastName).
 			person addresses add: (
 				Address new
-	        street: (1 to: 1000) atRandom printString
+			street: (1 to: 1000) atRandom printString
 										, ' Random Avenue';
-	        zip: (1000 to: 9000 by: 100) atRandom;
-	        yourself).
-	    session register: person
+			zip: (1000 to: 9000 by: 100) atRandom;
+			yourself).
+			session register: person
 	]
 ].
 ]]]
@@ -1282,9 +1341,9 @@ session inUnitOfWorkDo: [
 						readOneOf: Person
 						where: [ :each | each firstName = 'Alan' ].
 	alan addresses
-    add: (Address new
-		  street: '1025 Westwood Blv, 2nd Floor, Los Angeles, CA';
-		  zip: 90024;
+		add: (Address new
+			street: '1025 Westwood Blv, 2nd Floor, Los Angeles, CA';
+			zip: 90024;
 			yourself)
 ].
 ]]]
@@ -1305,15 +1364,15 @@ create a few convenience methods:
 [[[caption=Constructor method for the InvoiceItem
 InvoiceItem class >> description: aString price: aNumber
 	^self new
-    description: aString;
-    price: aNumber;
-    yourself
+		description: aString;
+		price: aNumber;
+		yourself
 ]]]
 
 [[[caption=To minimize external manipulation of a private collection
 Invoice >> addItem: anInvoiceItem
-  anInvoiceItem invoice: self.
-  self items add: anInvoiceItem
+	anInvoiceItem invoice: self.
+	self items add: anInvoiceItem
 ]]]
 
 [[[caption=Returns the added up price of its items
@@ -1329,19 +1388,19 @@ donations to the *Pharo Consortium>http://consortium.pharo.org* and
 
 [[[caption=Creating random amount donations
 session inUnitOfWorkDo: [
-  (session read: Person) do: [:person |
-    | invoice |
-    invoice := Invoice new
-      issueDate: Date today;
-      person: person;
-      address: person addresses atRandom.
+	(session read: Person) do: [:person |
+		| invoice |
+		invoice := Invoice new
+			issueDate: Date today;
+			person: person;
+			address: person addresses atRandom.
 		invoice
 			addItem: (InvoiceItem
-        description: 'Pharo Consortium donation'
-        price: (1000s to: 4000s by: 1000s) atRandom);
+		description: 'Pharo Consortium donation'
+		price: (1000s to: 4000s by: 1000s) atRandom);
 			addItem: (InvoiceItem
-        description: 'Pharo Association donation'
-        price: (20s to: 100s by: 10s) atRandom);
+		description: 'Pharo Association donation'
+		price: (20s to: 100s by: 10s) atRandom);
 			yourself.
 		session register: invoice.
 	]
@@ -1353,10 +1412,10 @@ print how much each Person donated.
 
 [[[
 (session read: Invoice) do: [:each |
-  Transcript
-    show: each person firstName, ' ', each person lastName;
-    show: ': ', each totalPrice printString;
-    cr.
+	Transcript
+		show: each person firstName, ' ', each person lastName;
+		show: ': ', each totalPrice printString;
+		cr.
 ]
 ]]]
 
@@ -1404,8 +1463,8 @@ like ==sum==.
 
 [[[
 ((SimpleQuery read: InvoiceItem)
-  readsOneObject: true;
-  retrieve: [:each | each price sum ]) executeIn: session.
+	readsOneObject: true;
+	retrieve: [:each | each price sum ]) executeIn: session.
 ]]]
 
 The retrieve method configures the query to return only the retrieved attributes
@@ -1421,8 +1480,8 @@ of collections, in the form of ''#(#(...) #(...) ...)''.
 
 [[[
 ((SimpleQuery read: Person)
-  retrieve: [:each | each firstName ];
-  retrieve: [:each | each lastName]) executeIn: session.
+	retrieve: [:each | each firstName ];
+	retrieve: [:each | each lastName]) executeIn: session.
 ]]]
 
 !!! Attributes of queries
@@ -1436,7 +1495,7 @@ attributes of referenced objects.
 
 [[[
 ((SimpleQuery read: Invoice)
-  where: [:each | each person lastName = 'Goldberg' ]
+	where: [:each | each person lastName = 'Goldberg' ]
 	)	executeIn: session
 ]]]
 
@@ -1445,7 +1504,7 @@ only Invoices containing items with a price above 2000.
 
 [[[
 ((SimpleQuery read: Invoice)
-  where: [:invoice |
+	where: [:invoice |
 		invoice items anySatisfy: [ :item |
 			item price > 2000 ]]) executeIn: session.
 ]]]
@@ -1485,9 +1544,9 @@ Glorp resolves all the ''JOINs'' for you.
 
 [[[caption=Retrieving the average donation
 ((SimpleQuery read: InvoiceItem)
-  retrieve: [ :each | each description];
-  retrieve: [ :each | each price average ];
-  groupBy: [ :each | each description]) executeIn: session.
+	retrieve: [ :each | each description];
+	retrieve: [ :each | each price average ];
+	groupBy: [ :each | each description]) executeIn: session.
 ]]]
 
 Although the ''GROUP BY'' expression is used extensively in production systems,
@@ -1506,8 +1565,8 @@ expression it lets you implement simple pagination queries.
 
 [[[
 ((SimpleQuery read: InvoiceItem)
-  limit: 3;
-  offset: 3) executeIn: session.
+	limit: 3;
+	offset: 3) executeIn: session.
 ]]]
 
 !!!! Fetching referenced objects
@@ -1524,8 +1583,8 @@ almost as easy as doing a ''JOIN'' in SQL.
 
 [[[
 ((SimpleQuery read: Invoice)
-  alsoFetch: [:each | each person ];
-  alsoFetch: [:each | each address]) executeIn: session.
+	alsoFetch: [:each | each person ];
+	alsoFetch: [:each | each address]) executeIn: session.
 ]]]
 
 You can specify as many ==alsoFetch:== references as you want, and Glorp
@@ -1543,8 +1602,8 @@ by simply adding ==asOuterJoin== to the field.
 
 [[[caption=Retrieving all at once with an OUTER JOIN
 ((SimpleQuery read: Invoice)
-  alsoFetch: [:each | each person ];
-  alsoFetch: [:each | each address asOuterJoin]) executeIn: session.
+	alsoFetch: [:each | each person ];
+	alsoFetch: [:each | each address asOuterJoin]) executeIn: session.
 ]]]
 
 The ==alsoFetch:== is a powerful feature, and can be used in combination with
@@ -1581,8 +1640,8 @@ between your query and other queries.
 
 [[[
 ((SimpleQuery read: InvoiceItem) except:
-  (SimpleQuery read: InvoiceItem where: [:each | each price < 1000])
-  ) executeIn: session.
+	(SimpleQuery read: InvoiceItem where: [:each | each price < 1000])
+	) executeIn: session.
 ]]]
 
 || SQL SET OPERATOR || Query selector ||
@@ -1639,31 +1698,31 @@ classes.
 
 [[[caption=Class model for LeftChild
 GlorpBookDescriptorSystem >> classModelForLeftChild: aClassModel
-  aClassModel newAttributeNamed: #left.
-  aClassModel newAttributeNamed: #top.
-  aClassModel newAttributeNamed: #id.
+	aClassModel newAttributeNamed: #left.
+	aClassModel newAttributeNamed: #top.
+	aClassModel newAttributeNamed: #id.
 ]]]
 [[[caption=Class model for RightChild
 GlorpBookDescriptorSystem >> classModelForRightChild: aClassModel
-  aClassModel newAttributeNamed: #right.
-  aClassModel newAttributeNamed: #top.
-  aClassModel newAttributeNamed: #id
+	aClassModel newAttributeNamed: #right.
+	aClassModel newAttributeNamed: #top.
+	aClassModel newAttributeNamed: #id
 ]]]
 
 [[[caption=Creating the tables
 GlorpBookDescriptorSystem >> tableForLEFTCHILDTABLE: aTable
-  (aTable createFieldNamed: 'left_value' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'top' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'id' type: (self sequenceTypeNamed: 'parent_seq'))
-    bePrimaryKey.
+	(aTable createFieldNamed: 'left_value' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'top' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'id' type: (self sequenceTypeNamed: 'parent_seq'))
+		bePrimaryKey.
 ]]]
 
 [[[
 GlorpBookDescriptorSystem >> tableForRIGHTCHILDTABLE: aTable
-  (aTable createFieldNamed: 'right_value' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'top' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'id' type: (self sequenceTypeNamed: 'parent_seq'))
-    bePrimaryKey.
+	(aTable createFieldNamed: 'right_value' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'top' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'id' type: (self sequenceTypeNamed: 'parent_seq'))
+		bePrimaryKey.
 ]]]
 
 We introduced ==sequenceTypeNamed:==, that we didn't use before. When using
@@ -1682,7 +1741,7 @@ Class Descriptor for it.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForParent: aDescriptor
-  (self typeResolverFor: Parent) register: aDescriptor abstract: true.
+	(self typeResolverFor: Parent) register: aDescriptor abstract: true.
 ]]]
 
 As you can see, we introduced a concept in the Class Descriptor that
@@ -1699,7 +1758,7 @@ We will create one for our class ==Parent==
 
 [[[
 GlorpBookDescriptorSystem >> typeResolverForParent
-  ^HorizontalTypeResolver forRootClass: Parent
+	^HorizontalTypeResolver forRootClass: Parent
 ]]]
 
 There are different classes of resolvers:
@@ -1720,30 +1779,30 @@ in a call to typeResolverForParent.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForLeftChild: aDescriptor
-  | leftTable |
-  leftTable := self tableNamed: 'LEFTCHILDTABLE'.
-  aDescriptor table: leftTable.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id to: (leftTable fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #top to: (leftTable fieldNamed: 'top').
-  (aDescriptor newMapping: DirectMapping)
-    from: #left to: (leftTable fieldNamed: 'left_value').
-  (self typeResolverFor: Parent) register: aDescriptor.
+	| leftTable |
+	leftTable := self tableNamed: 'LEFTCHILDTABLE'.
+	aDescriptor table: leftTable.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id to: (leftTable fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #top to: (leftTable fieldNamed: 'top').
+	(aDescriptor newMapping: DirectMapping)
+		from: #left to: (leftTable fieldNamed: 'left_value').
+	(self typeResolverFor: Parent) register: aDescriptor.
 ]]]
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForRightChild: aDescriptor
-  | rightTable |
-  rightTable := self tableNamed: 'RIGHTCHILDTABLE'.
-  aDescriptor table: rightTable.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id to: (rightTable fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #top to: (rightTable fieldNamed: 'top').
-  (aDescriptor newMapping: DirectMapping)
-    from: #right to: (rightTable fieldNamed: 'right_value').
-  (self typeResolverFor: Parent) register: aDescriptor.
+	| rightTable |
+	rightTable := self tableNamed: 'RIGHTCHILDTABLE'.
+	aDescriptor table: rightTable.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id to: (rightTable fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #top to: (rightTable fieldNamed: 'top').
+	(aDescriptor newMapping: DirectMapping)
+		from: #right to: (rightTable fieldNamed: 'right_value').
+	(self typeResolverFor: Parent) register: aDescriptor.
 ]]]
 
 If you look at the last line in the definition of Descriptors for ==LeftChild==
@@ -1781,7 +1840,7 @@ for use. As a result the following request will raise an exception.
 In this method of organizing the tables there is one table that holds the data
 for all objects in the hierarchy. In this example the one table is called
 ==ALL_DATA==. We will include an ==object_type== column used to store the type
-of the object in the row.  This allows GLORP to create an instance of the
+of the object in the row.	This allows GLORP to create an instance of the
 correct class when it reads a row in the table. Note
 that regardless of what type of object is in a row, one column,
 either ==left_value== or ==right_value==, will be ==null==.
@@ -1792,8 +1851,8 @@ query will be faster as there is only one table to access.
 We start by describing the new Type Resolver for the ==Parent== class.
 
 [[[
-  GlorpBookDescriptorSystem >> typeResolverForParent
-    ^FilteredTypeResolver forRootClass: Parent
+	GlorpBookDescriptorSystem >> typeResolverForParent
+		^FilteredTypeResolver forRootClass: Parent
 ]]]
 
 The class definitions remain the same as in the Table for each Concrete
@@ -1801,15 +1860,15 @@ Class example. The descriptor changes a bit.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForParent: aDescriptor
-  | table |
-  table := self tableNamed: 'ALL_DATA'.
-  aDescriptor table: table.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id to: (table fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #top to: (table fieldNamed: 'top').
-  (self typeResolverFor: Parent)
-    register: aDescriptor abstract: true
+	| table |
+	table := self tableNamed: 'ALL_DATA'.
+	aDescriptor table: table.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id to: (table fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #top to: (table fieldNamed: 'top').
+	(self typeResolverFor: Parent)
+		register: aDescriptor abstract: true
 ]]]
 
 We use a different resolver, need to supply values for ==object_type==
@@ -1817,19 +1876,19 @@ column and need more information for the ==Parent== class.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForLeftChild: aDescriptor
-  | leftTable |
-  leftTable := self tableNamed: 'ALL_DATA'.
-  aDescriptor table: leftTable.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id to: (leftTable fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #top to: (leftTable fieldNamed: 'top').
-  (aDescriptor newMapping: DirectMapping)
-    from: #left to: (leftTable fieldNamed: 'left_value').
-  (self typeResolverFor: Parent)
-    register: aDescriptor
-    keyedBy: 'L'
-    field: (leftTable fieldNamed: 'object_type').
+	| leftTable |
+	leftTable := self tableNamed: 'ALL_DATA'.
+	aDescriptor table: leftTable.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id to: (leftTable fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #top to: (leftTable fieldNamed: 'top').
+	(aDescriptor newMapping: DirectMapping)
+		from: #left to: (leftTable fieldNamed: 'left_value').
+	(self typeResolverFor: Parent)
+		register: aDescriptor
+		keyedBy: 'L'
+		field: (leftTable fieldNamed: 'object_type').
 ]]]
 
 Note how to indicate the value of the ==object_type== column for
@@ -1841,19 +1900,19 @@ storage space it will take, and also less bandwidth used.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForRightChild: aDescriptor
-  | rightTable |
-  rightTable := self tableNamed: 'ALL_DATA'.
-  aDescriptor table: rightTable.
-  (aDescriptor newMapping: DirectMapping)
-    from: #id to: (rightTable fieldNamed: 'id').
-  (aDescriptor newMapping: DirectMapping)
-    from: #top to: (rightTable fieldNamed: 'top').
-  (aDescriptor newMapping: DirectMapping)
-    from: #right to: (rightTable fieldNamed: 'right_value').
-  (self typeResolverFor: Parent)
-    register: aDescriptor
-    keyedBy: 'R'
-    field: (rightTable fieldNamed: 'object_type').
+	| rightTable |
+	rightTable := self tableNamed: 'ALL_DATA'.
+	aDescriptor table: rightTable.
+	(aDescriptor newMapping: DirectMapping)
+		from: #id to: (rightTable fieldNamed: 'id').
+	(aDescriptor newMapping: DirectMapping)
+		from: #top to: (rightTable fieldNamed: 'top').
+	(aDescriptor newMapping: DirectMapping)
+		from: #right to: (rightTable fieldNamed: 'right_value').
+	(self typeResolverFor: Parent)
+		register: aDescriptor
+		keyedBy: 'R'
+		field: (rightTable fieldNamed: 'object_type').
 ]]]
 
 Even though Parent is still an abstract class Glorp requires us to given
@@ -1862,11 +1921,11 @@ we would have to provide a key value for the column ==object_type==.
 
 [[[
 GlorpBookDescriptorSystem >> tableForALL_DATA: aTable
-  (aTable createFieldNamed: 'top' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'left_value' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'right_value' type: (platform varChar: 50)).
-  (aTable createFieldNamed: 'object_type' type: (platform varChar: 2)).
-  (aTable createFieldNamed: 'id' type: (platform sequence)) bePrimaryKey.
+	(aTable createFieldNamed: 'top' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'left_value' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'right_value' type: (platform varChar: 50)).
+	(aTable createFieldNamed: 'object_type' type: (platform varChar: 2)).
+	(aTable createFieldNamed: 'id' type: (platform sequence)) bePrimaryKey.
 ]]]
 
 
@@ -1915,8 +1974,8 @@ mentioned before.
 [[[caption=Special selectors
 query where: [:each |
  each attributeOne > 100 OR: [
-  each attributeTwo notNIL AND: [
-    each attributeThree isNIL ] ] ]
+	each attributeTwo notNIL AND: [
+		each attributeThree isNIL ] ] ]
 ]]]
 
 !!!! Function expressions
@@ -1926,7 +1985,7 @@ following Glorp query:
 
 [[[
 SimpleQuery read: Person where: [:each |
-  each lastName asUppercase similarTo: 'GOLD%' ]
+	each lastName asUppercase similarTo: 'GOLD%' ]
 ]]]
 
 You can see there that we send the ==asUppercase== message to the lastName
@@ -1939,7 +1998,7 @@ SELECT * FROM Person WHERE UPPER(lastName) LIKE 'GOLD%'
 
 It is very likely that the ==similarTo:== selector will be highlighted
 as missing or not implemented in the current image. This is so because
-the ==MessageArchiver==  will resolve the symbol to an instance of one
+the ==MessageArchiver==	will resolve the symbol to an instance of one
 of the subclasses of ==FunctionExpression==. It achieves it by rebuilding
 the ''archiver'' as it consumes the selectors, you can find how it does by
 looking for the implementors of ==rebuildOn:startingFrom:withOuterScopeBase:==.

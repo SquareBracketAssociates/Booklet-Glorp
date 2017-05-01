@@ -738,16 +738,16 @@ an ''ActiveRecord'' like mapping. It lets you fine tune the persistence of
 your classes. We will go over the different configurations of class models,
 table data types and constraints and mappings of all sorts.
 
-!!! Class Models
+!!! Class models
 
 A class model defines the attributes of your domain objects, and how they
-compose. Each of your persisted objects needs to have an instance of
-==GlorpClassModel== in the descriptor system containing a collection of all the
-attributes of your class. These attributes are added by
-implementing ==classModelForYourClass:== by convention.
+compose. Each of your persisted objects should have an instance of
+==GlorpClassModel== in the descriptor system containing all the
+attributes of your class. By convention, these attributes are added by
+implementing ==classModelForYourClass:== as we did previously for the Person example.
 
-The simplest way to add an attribute is using a series of convenience methods,
-described below:
+The simplest way to add an attribute is using a series of convenience methods returning instances of ==GlorpAttributeModel==,
+ described below:
 
 ;==newAttributeNamed: #email==
 :Used to define simple scalar/literal values such as Numbers, Strings, Dates, etc.
@@ -760,23 +760,22 @@ described below:
 ;==newAttributeNamed: #counters dictionaryFrom: keyClass to: valueClass==
 :Used to define an attribute that is a Dictionary where the key is ==keyClass== and its values are instances of ==valueClass==.
 
-!!! Attribute Properties
+!!! Attribute properties
 
 The above described methods return instances of ==GlorpAttributeModel==, which
-share common properties that you can configure.
+share common properties that you can configure using the following messages.
 
 ;==useDirectAccess: aBoolean==
-:Let you define whether the access to the attribute described by the symbol of your domain model will be 
-performed by directly accessing the instance variable (slot) instead of using a message send. This is the
-default, and lets you persist variables that don't have getters and setters. It's also useful where the getters and setters
-have extra behavior that you don't want triggered by the persistence mechanisms. On the other hand, going through a 
-message send allows you to persist things that don't correspond directly to a single instance variable.
+:Let you define whether the access to the attribute described by the symbol of your domain model will be performed by directly accessing the instance variable (slot) instead of using a message send. This is the default, and lets you persist variables that don't have getters and setters. It's also useful where the getters and setters
+have extra behavior that you don't want triggered by the persistence mechanisms. On the other hand, going through a message send allows you to persist things that don't correspond directly to a single instance variable.
 ;==beForPseudoVariable==
 :Useful for cases where you want to describe an attribute that won't be read nor written, but still described to be used on queries.
+
+
 For example, in a later section we talk about mapping the position of an object in a collection to a field in the database, since databases don't
 maintain order. We could map that order field to a pseudo-variable and use it in queries, even though we don't want it stored in the object.
 
-[[[caption=Example class model for our Person class
+[[[
 GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
 	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
 	aClassModel newAttributeNamed: #firstName.
@@ -788,7 +787,7 @@ GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
 	aClassModel newAttributeNamed: #counters from: String to: Integer.
 ]]]
 
-!!! Table Models
+!!! Table model
 
 Glorp also models your database objects, such as tables, constraints, indexes,
 etc.. With this model it will be able to determine how to serialize the objects to
@@ -801,11 +800,11 @@ method is responsible for describing your table in the relational
 database, including field names and their data types, contraints (primary keys
 and/or foreign keys), etc.
 
-!!!! Adding Fields to the Table
+!!!! Adding fields to the table
 
-Let's bring back our example from the beginning:
+Let's bring back our example from the beginning of this book
 
-[[[caption=Table model for PERSON table
+[[[
 GlorpBookDescriptorSystem >> tableForPERSON: aTable
 	(aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
 	aTable createFieldNamed: 'firstName' type: (platform varChar: 100).
@@ -816,6 +815,7 @@ GlorpBookDescriptorSystem >> tableForPERSON: aTable
 As you can see, you can add a field by sending ==createFieldNamed:type:== to
 the table object. The first argument of the method is name of the field
 (aka ''column'') in your table, the second one is the datatype.
+
 For the datatype we're not specifying any particular implementation of the type
 but instead we send a message to the ''platform'' object, and in Glorp jargon
 the platform is the RDBMS we'll be using.
@@ -832,7 +832,7 @@ Going back to ==createFieldNamed:type:==, it will return an instance of
 as ==bePrimaryKey== which will create a ''PK'' (primary key) on the table
 for this field.
 
-Commonly used datatypes in alphabetic order
+Commonly used datatypes in alphabetic order are: 
 
 ||selector||''SQL-92'' datatype||Pharo class
 |{ blob |{ BLOB |{ ByteArray
@@ -864,7 +864,7 @@ As expected, there is a convention to define Descriptors and, you guessed right,
 it is ==descriptorFor''YourClass'':== that will receive as an argument a
 instance of ==Descriptor== on which you will configure the mappings.
 
-[[[caption=Example descriptor for our Person class.
+[[[
 GlorpBookDescriptorSystem >> descriptorForPerson: aDescriptor
 	| table |
 	table := self tableNamed: 'PERSON'.
@@ -892,7 +892,7 @@ the ==from:== parameter is not the symbol of the selector
 but instead the name of attribute you have defined in your ==classModelFor...:==
 method.
 
-!!!! 1:1 Relationships.
+!!!! 1:1 relationships.
 When you're trying to map a single reference from one object to another,
 you use the class ==OneToOneMapping== and specify the name of the attribute
 that this instance is mapping. If everything is as simple as this you don't
@@ -900,7 +900,7 @@ have to specify further instructions and Glorp will determine how to retrieve
 the instances based on the information provided in the ClassModel, foreign keys,
 etc. If you need further instructions you can always define them, more on that later.
 
-!!!! 1:N Relationships.
+!!!! 1:N relationships.
 If you are trying to map a collection that belongs to a ''parent/owner'' object
 like the invoices of a Person or the items of such invoice to the invoice itself,
 then you have to use the ==OneToManyMapping== class.
@@ -908,7 +908,7 @@ It is commonly used when you have the rows of the tables at the ''N side'' of
 the relation have a field that ''points back'' to the the ''1 side''.
 In our example, the invoices have a Foreign Key pointing back to the persons table.
 
-!!!! N:M Relationships.
+!!!! N:M relationships.
 The Many to Many relationships is similar to the previous one, but in this case
 the other side of the relation might ''belong'' to more than one owner.
 For instance, if you have Person and Tag, a Person might have many Tags,
@@ -924,7 +924,7 @@ Following our Person to Tag relation, the table name Glorp will expect is
 ==TAG_ON_PERSON==, and this must also have its definition in the descriptor system,
 so in this case there must be a ==tableForTAG_ON_PERSON:== method.
 
-!!! Common Properties of Relationship Mappings
+!!! Common properties of relationship mappings
 
 All ==OneToOneMapping==, ==OneToManyMapping== and ==ManyToManyMapping== are
 convenience subclasses of ==RelationshipMapping==, and as such they share
@@ -963,7 +963,7 @@ happen without the other knowing it, and Glorp will try to delete an
 ''exclusive'' object that was already removed from the database
 by the ''CASCADE'' and because of that it will fail.
 
-!!!! Collection Type.
+!!!! Collection type.
 In the case of ''to many'' mappings you can specify the collection type
 of the mapping, for instance, you can send ==collectionType: Set== to your
 mapping and have it initialized to a Set instead of the default ==OrderedCollection==.
@@ -971,10 +971,9 @@ mapping and have it initialized to a Set instead of the default ==OrderedCollect
 !!!! Proxy.
 And last, but not least, you can specify whether to proxy or not such a relation.
 By sending ==shouldProxy:== either ==true== or ==false==, Glorp will
-place proxies or immediately build an instance from the database.
-If you don't specify this, it will proxy by default.
+place proxies or immediately build an instance from the database. If you don't specify this, it will proxy by default.
 
-!!!!! A Word about Proxies.
+!!! A Word about Proxies.
 To avoid reading the whole object graph every time you read an object that
 has any kind of relationship mapping, Glorp places a Proxy object instead
 of reading it from the database.
@@ -995,12 +994,23 @@ And also, Proxies are tricky animals, so beware when debugging something
 that involves them. Sometimes they can fool the development tools, making
 them believe they're something they're not!
 
+
+
+
+
+
 !! Extending our Basic Example
 Now that we explained in more detail the main parts of Glorp's descriptor system,
 we're ready to extend our basic example, we're going to create a minimal
 invoicing model to include the concepts just learnt.
 
-!!! Domain Classes
+We will 
+- define new Pharo class
+- describe such new classes to be handled by Glorp
+- describe the table in which such class instances will be stored
+- describe the mapping between the instances and the records.
+
+!!! Domain classes
 
 To do so we will create the following classes ==Person==,
 ==Address==, ==Invoice==, ==InvoiceItem==, all inheriting from
@@ -1015,35 +1025,37 @@ will use it as a *''surrogate key''>https://en.wikipedia.org/wiki/Surrogate_key*
 which is a key that is a unique identifier, an object not derived from
 application data.
 
-[[[caption=Hierarchy Root of Book Classes.
+
+Here is the hierarchy root of book classes.
+[[[
 Object subclass: #GlorpBookObject
 	instanceVariableNames: 'id'
 	classVariableNames: ''
 	package: 'Glorp-Book'.
 ]]]
 
-[[[caption=Person Class.
+[[[
 GlorpBookObject subclass: #Person
 	instanceVariableNames: 'firstName lastName birthDate addresses invoices tags'
 	classVariableNames: ''
 	package: 'Glorp-Book'.
 ]]]
 
-[[[caption=Address Class.
+[[[
 GlorpBookObject subclass: #Address
 	instanceVariableNames: 'street number city zip'
 	classVariableNames: ''
 	package: 'Glorp-Book'.
 ]]]
 
-[[[caption=Invoice Class.
+[[[
 GlorpBookObject subclass: #Invoice
 	instanceVariableNames: 'issueDate person address items'
 	classVariableNames: ''
 	package: 'Glorp-Book'.
 ]]]
 
-[[[caption=Invoice Item Class.
+[[[
 GlorpBookObject subclass: #InvoiceItem
 	instanceVariableNames: 'invoice description price'
 	classVariableNames: ''
@@ -1057,14 +1069,14 @@ Otherwise it could cause some failures because Glorp keeps a copy of the object
 attributes to enable rolling back changes on memory. Plus... having a ''complete''
 instance is a good practice too.
 
-[[[caption=Initialization methods
+[[[
 Person >> initialize
 	super initialize.
 	addresses := OrderedCollection new.
 	invoices := OrderedCollection new.
 ]]]
 
-[[[caption=Initialization methods
+[[[
 Invoice >> initialize
 	super initialize.
 	items := OrderedCollection new.
@@ -1072,9 +1084,9 @@ Invoice >> initialize
 
 !!! Class Model Declarations
 Let's create our ==GlorpBookDescriptorSystem== to describe the new
-domain model.
+domain models.
 
-[[[caption=Class Model Declarations
+[[[
 GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
 	(aClassModel newAttributeNamed: #id) useDirectAccess: true.
 	aClassModel newAttributeNamed: #firstName.
@@ -1112,8 +1124,9 @@ GlorpBookDescriptorSystem >> classModelForInvoiceItem: aClassModel
 !!!! Table Declarations
 
 Then we should declare the tables that represent our domain.
+Here is the table models for the class ==Person==, ==Address== and ==Invoice==.
 
-[[[caption=Table models for Person
+[[[
 GlorpBookDescriptorSystem >> tableForPERSON: aTable
 	(aTable createFieldNamed: 'id' type: platform serial) bePrimaryKey.
 	aTable createFieldNamed: 'firstName' type: (platform varChar: 100).
@@ -1128,6 +1141,7 @@ GlorpBookDescriptorSystem >> tableForADDRESS: aTable
 	aTable createFieldNamed: 'zip' type: platform integer.
 ]]]
 
+
 [[[
 GlorpBookDescriptorSystem >> tableForINVOICE: aTable
 	| personField addressField |
@@ -1135,11 +1149,11 @@ GlorpBookDescriptorSystem >> tableForINVOICE: aTable
 		bePrimaryKey.
 	aTable createFieldNamed: 'issueDate' type: platform date.
 	personField := aTable
-									 createFieldNamed: 'person_id'
-									 type: platform integer.
+		createFieldNamed: 'person_id'
+		type: platform integer.
 	addressField := aTable
-	 									createFieldNamed: 'address_id'
-										type: platform integer.
+	 	createFieldNamed: 'address_id'
+		type: platform integer.
 	aTable
 		addForeignKeyFrom: personField
 		to: ((self tableNamed: 'PERSON') fieldNamed: 'id').
@@ -1150,8 +1164,8 @@ GlorpBookDescriptorSystem >> tableForINVOICE: aTable
 
 As you can see in our ''INVOICE'' table, we not only added fields, but also
 added ''Foreign Keys'' (aka ''FK'')
-to our table table model. This will add the ''FK'' to the list of constraints
-of the table model, and will be used by Glorp to order writes/deletions and
+to our table table model using the message ==addForeignKeyFrom:to:==.
+This will add the foreign keys to the list of constraints of the table model, and will be used by Glorp to order writes/deletions and
 infer relations.
 
 Also notice that we need to pass the referenced field as argument.
@@ -1178,11 +1192,11 @@ GlorpBookDescriptorSystem >> tableForINVOICEITEM: aTable
 GlorpBookDescriptorSystem >> tableForPERSON_ON_ADDRESS: aTable
 	| personField addressField |
 	personField := aTable
-										createFieldNamed: 'person_id'
-										type: platform integer.
+		createFieldNamed: 'person_id'
+		type: platform integer.
 	addressField := aTable
-										createFieldNamed: 'address_id'
-										type: platform integer.
+		createFieldNamed: 'address_id'
+		type: platform integer.
 	personField bePrimaryKey.
 	addressField bePrimaryKey.
 	aTable
@@ -1198,12 +1212,13 @@ As you can see in the last method, we created a table model for the table
 this link table references to other tables we also created Foreign Keys
 from each reference field using the same approach described before.
 
-!!! Mapping Declarations
+!!! Mapping declarations
 
+!!!!! Address
 The mapping for the class and table address is simple since there is a direct
 mapping between the class model (the domain model) and the table.
 
-[[[caption=Class descriptors
+[[[
 GlorpBookDescriptorSystem >> descriptorForAddress: aDescriptor
 	| table |
 	table := self tableNamed: 'ADDRESS'.
@@ -1220,6 +1235,7 @@ GlorpBookDescriptorSystem >> descriptorForAddress: aDescriptor
 ]]]
 
 
+!!!!! Invoice
 The mapping for invoice is a bit more elaborated, because it not only
 contains Direct Mappings, and one-to-one mappings for the ==Person== and
 ==Address==, but also contains a one-to-many relationship to its items.
@@ -1264,6 +1280,7 @@ GlorpBookDescriptorSystem >> descriptorForInvoice: aDescriptor
 		writeTheOrderField.
 ]]]
 
+!!!!! InvoiceItem
 The mapping for each invoice item is slightly different since an item is always
 part of an Invoice, and only that invoice; so because of that we have a
 ==OneToOneMapping== referencing its invoice. This way we make the relation
@@ -1287,7 +1304,7 @@ GlorpBookDescriptorSystem >> descriptorForInvoiceItem: aDescriptor
 		attributeName: #invoice.
 ]]]
 
-
+!!!!! Person
 The mapping for the class Person is more elaborate and worth some explanation
 of what happens in the last lines.
 
@@ -1343,17 +1360,17 @@ session inUnitOfWorkDo: [
 	| lastnames firstnames |
 	{ 'Dan'. 'Alan'. 'Adele' }
 		with: {'Ingalls'. 'Kay'. 'Goldberg'}
-		do: [:firstName :lastName |
+		do: [ :firstName :lastName |
 			| person |
 			person := (Person new
-									firstName: firstName;
-									lastName: lastName).
+				firstName: firstName;
+				lastName: lastName).
 			person addresses add: (
 				Address new
-			street: (1 to: 1000) atRandom printString
-										, ' Random Avenue';
-			zip: (1000 to: 9000 by: 100) atRandom;
-			yourself).
+					street: (1 to: 1000) atRandom printString
+					, ' Random Avenue';
+					zip: (1000 to: 9000 by: 100) atRandom;
+					yourself).
 			session register: person
 	]
 ].
@@ -1361,12 +1378,12 @@ session inUnitOfWorkDo: [
 
 Now we created the sample Persons, let's add an extra address for Alan.
 
-[[[caption=Adding Alan's VPRI institute address
+[[[
 session inUnitOfWorkDo: [
 	| alan |
 	alan := session
-						readOneOf: Person
-						where: [ :each | each firstName = 'Alan' ].
+		readOneOf: Person
+		where: [ :each | each firstName = 'Alan' ].
 	alan addresses
 		add: (Address new
 			street: '1025 Westwood Blv, 2nd Floor, Los Angeles, CA';
@@ -1379,32 +1396,32 @@ As you can see, we didn't have to register the newly created address because
 the Person was read inside of a UnitOfWork. If we read the instance again
 and inspect its addresses we will find the new instance is there.
 
-[[[caption=Inspect the result of the following
+[[[
 (session
 	readOneOf: Person
-	where: [ :each | each firstName = 'Alan' ]) addresses.
+	where: [ :each | each firstName = 'Alan' ]) addresses inspect
 ]]]
 
 Before continuing and to make code simpler and more readable we'll
 create a few convenience methods:
 
-[[[caption=Constructor method for the InvoiceItem
+[[[
 InvoiceItem class >> description: aString price: aNumber
-	^self new
+	^ self new
 		description: aString;
 		price: aNumber;
 		yourself
 ]]]
 
-[[[caption=To minimize external manipulation of a private collection
+[[[
 Invoice >> addItem: anInvoiceItem
 	anInvoiceItem invoice: self.
 	self items add: anInvoiceItem
 ]]]
 
-[[[caption=Returns the added up price of its items
+[[[
 Invoice >> totalPrice
-	^self items sum: #price
+	^ self items sum: #price
 ]]]
 
 We can now procceed to create an few instances of Invoice. Let's create
@@ -1423,12 +1440,11 @@ session inUnitOfWorkDo: [
 			address: person addresses atRandom.
 		invoice
 			addItem: (InvoiceItem
-		description: 'Pharo Consortium donation'
+				description: 'Pharo Consortium donation'
 		price: (1000s to: 4000s by: 1000s) atRandom);
 			addItem: (InvoiceItem
-		description: 'Pharo Association donation'
-		price: (20s to: 100s by: 10s) atRandom);
-			yourself.
+				description: 'Pharo Association donation'
+		price: (20s to: 100s by: 10s) atRandom); yourself.
 		session register: invoice.
 	]
 ].
@@ -1449,17 +1465,19 @@ print how much each Person donated.
 When we presented the ReferenceMappings we mentioned how Glorp puts proxies
 in place of a referenced object to avoid performing unnecessary roundtrips
 to the database.
+
 In the example above, assuming all caches are empty, Glorp will perform one
 query to retrieve all the Invoices and then one extra query to retrieve
 the data to instantiate each Person. So if you retrieve Invoices for three
 different persons, Glorp will perform four queries, it is four roundtrips,
 to the database. Keep that in mind while we continue with other examples.
 
-[[[caption=Calculating the total amount donated
+
+[[[
 (session read: Invoice) sum: #totalPrice
 ]]]
 
-The #sum: above will retrieve all the rows from the tables,
+The message ==sum:== above will retrieve all the rows from the tables,
 instantiate an equivalent quantity of Invoice and then go over all
 the invoices' items to sum them. In our example, we only have a few instances
 but what if we had a million of them? Instantiating everything at the Pharo
@@ -1467,7 +1485,9 @@ side wouldn't be convenient for such a simple sum. Performing an SQL ==SUM()==
 at the database side would be more efficient, since we would only retrieve
 the total instead. But how to do such a query?
 
-!!! The Query object
+%sd here.
+!! The Query object
+
 So far we've been querying objects by means of sending ==read:== or
 ==read:where:== to the session object, but if you want to perform
 a particular query, like limiting the number of results, running an aggregate
@@ -1475,7 +1495,8 @@ function like ==SUM()==, ==AVG()==, ordering the rows at the server side,
 performing subqueries and many other features then the session object
 can't provide you with an API for that.
 
-Everyime you sent a ==read:== message to the session, the session created a
+!!! The Read: message
+Everytime you sent a ==read:== message to the session, the session created a
 simple ==Query== object to read the class passed as parameter, but you can
 instantiate a Query object independently, configure it to fit your needs and
 execute it in the session. Enter the ==Query== object.
@@ -1569,7 +1590,8 @@ an aggregate function, all the non-aggregated fields retrieved must be included
 in the ''GROUP BY''. Notice here we're also grouping by a field in other table,
 Glorp resolves all the ''JOINs'' for you.
 
-[[[caption=Retrieving the average donation
+Retrieving the average donation
+[[[
 ((SimpleQuery read: InvoiceItem)
 	retrieve: [ :each | each description];
 	retrieve: [ :each | each price average ];
@@ -1627,7 +1649,9 @@ with the above example that invoice would be left out by the JOIN.
 You can save that by doing an ==OUTER JOIN== on the field you're fetching
 by simply adding ==asOuterJoin== to the field.
 
-[[[caption=Retrieving all at once with an OUTER JOIN
+
+Retrieving all at once with an OUTER JOIN
+[[[
 ((SimpleQuery read: Invoice)
 	alsoFetch: [:each | each person ];
 	alsoFetch: [:each | each address asOuterJoin]) executeIn: session.
@@ -1676,8 +1700,16 @@ between your query and other queries.
 | ==INTERSECT== | ==intersect:== |
 | ==EXCLUDE== | ==minus:== |
 
+
+
+
+
+
+
+
+
 !! Advanced topics
-!!! Inheritance and Polymorphic Queries
+!!! Inheritance and polymorphic queries
 If the class ==Parent== has two subclasses named ==LeftChild== and
 ==RightChild==, a polymorphic query is one were we can query on the
 ==Parent== class and as a result get instances of ==Parent==, ==LeftChild==
@@ -1723,20 +1755,24 @@ Parent subclass: #LeftChild
 We'll extend our previous Descriptor System to include the newly created
 classes.
 
-[[[caption=Class model for LeftChild
+Class model for LeftChild
+[[[
 GlorpBookDescriptorSystem >> classModelForLeftChild: aClassModel
 	aClassModel newAttributeNamed: #left.
 	aClassModel newAttributeNamed: #top.
 	aClassModel newAttributeNamed: #id.
 ]]]
-[[[caption=Class model for RightChild
+
+Class model for RightChild
+[[[
 GlorpBookDescriptorSystem >> classModelForRightChild: aClassModel
 	aClassModel newAttributeNamed: #right.
 	aClassModel newAttributeNamed: #top.
 	aClassModel newAttributeNamed: #id
 ]]]
 
-[[[caption=Creating the tables
+Creating the tables
+[[[
 GlorpBookDescriptorSystem >> tableForLEFTCHILDTABLE: aTable
 	(aTable createFieldNamed: 'left_value' type: (platform varChar: 50)).
 	(aTable createFieldNamed: 'top' type: (platform varChar: 50)).
@@ -1785,7 +1821,7 @@ We will create one for our class ==Parent==
 
 [[[
 GlorpBookDescriptorSystem >> typeResolverForParent
-	^HorizontalTypeResolver forRootClass: Parent
+	^ HorizontalTypeResolver forRootClass: Parent
 ]]]
 
 There are different classes of resolvers:
@@ -1878,8 +1914,8 @@ query will be faster as there is only one table to access.
 We start by describing the new Type Resolver for the ==Parent== class.
 
 [[[
-	GlorpBookDescriptorSystem >> typeResolverForParent
-		^FilteredTypeResolver forRootClass: Parent
+GlorpBookDescriptorSystem >> typeResolverForParent
+	^FilteredTypeResolver forRootClass: Parent
 ]]]
 
 The class definitions remain the same as in the Table for each Concrete
@@ -1961,6 +1997,8 @@ Although in our example with the class ==Parent== was the superclass of both
 ==LeftChild== and ==RightChild==, in Glorp terms it is not required that
 child Descriptors share a common class ancestor, as far as they have the same
 class attributes as the parent Descriptor.
+
+
 
 !! Under the hood
 !!! How Glorp expressions work

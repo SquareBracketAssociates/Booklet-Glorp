@@ -483,7 +483,7 @@ sequences, constraints and so on.
 
 
 
-!! Transactions and ''Unit of Work''
+!! ''Unit of Work'' and Transactions
 
 If you worked with RDBMS's before, you know you can use transactions that
 detach you from immediate writes to the database files, and enable you to
@@ -580,9 +580,7 @@ session
 
 
 
-
-
-!!! Update of instances
+!!! Object update
 
 We can also update one instance, i.e., to read one and update it. We do it
 in the context of a UnitOfWork using the message ==inUnitOfWorkDo:==.
@@ -607,12 +605,14 @@ This is because when you're working inside a Unit of Work all the objects
 you read are automatically registered by the session, saving you from explicitly
 ''registering'' them (which is safe to do anyway, but it is not required).
 
-!!! Deletion of Objects
+!!! Object deletion 
+
 So far we covered Creation, Read, and Update. We're only missing the Deletion of
 objects. This is as easy as it gets, just send the ==delete:== to the session
 object with the object you want to delete as argument.
 
-[[[caption=Deleting an object inside of a UnitOfWork
+The following snippet show how to delete an object inside of a UnitOfWork:
+[[[
 session inUnitOfWorkDo: [
 	| person |
 	person := session
@@ -622,9 +622,9 @@ session inUnitOfWorkDo: [
 	].
 ]]]
 
-Another way to delete objects is passing a condition block.
+Another way to delete objects is passing a condition block:
 
-[[[caption=Delete using a where clause
+[[[
 session inUnitOfWorkDo: [
 	session
 		delete: Person
@@ -640,7 +640,7 @@ to rollback such action unless you handle the transaction manually.
 Glorp lets you handle transactions automatically using a unit of work or
 manually as we will now show.
 
-!!!! Rolling Back Changes
+!!!! Rolling back changes
 *Atomic>https://en.wikipedia.org/wiki/Atomicity_%28database_systems%29*
 modifications to a database are important, and to achieve that you need transactions
  that let you rollback changes if something fails.
@@ -653,17 +653,18 @@ it reverts the changes in your objects.
 The following example shows that the last name of the Locke object will not be modified
 and the database updated since the unit of work failed.
 
-[[[caption=Updating an object read within a UnitOfWork
+[[[
 session inUnitOfWorkDo: [
 	person := session
 		readOneOf: Person
 		where: [:each | each lastName = 'Locke'].
 	person lastName: 'Wayne'.
 	Error signal: 'This error will abort the Unit Of Work.'
-]
+	]
 ]]]
 
-!!!! Managing the Transaction Manually
+!!!! Manually managing transaction
+
 The ==inUnitOfWorkDo:== message is a convenient way to isolate a block of execution
 within the context of a transaction at both object and database levels. However
 it has some limitations, like not being able to handle ''nested'' UnitOfWorks
@@ -678,22 +679,22 @@ unit of work manually, you can do so by using the following messages:
 -==rollbackUnitOfWork==
 -==commitUnitOfWorkAndContinue==
 
-The first three have self-describing selectors, and can be using like in the referenced code script.
-Manual handling of the transaction
+The first three have self-describing selectors, and can be used like in the following code snippet.
+
 [[[
-	person := session
-		readOneOf: Person
-		where: [:each | each firstName = 'George'].
-	session beginUnitOfWork.
-	session delete: person.
-	session rollbackUnitOfWork.
-	session beginUnitOfWork.
-	person lastName: 'Lukas'.
-	session register: person.
-	session commitUnitOfWork.
+person := session
+	readOneOf: Person
+	where: [:each | each firstName = 'George'].
+session beginUnitOfWork.
+session delete: person.
+session rollbackUnitOfWork.
+session beginUnitOfWork.
+person lastName: 'Lukas'.
+session register: person.
+session commitUnitOfWork.
 ]]]
 
-In the case of the message ==commitUnitOfWorkAndContinue== it needs some explanation,
+The message ==commitUnitOfWorkAndContinue== needs some explanation,
 but the concept is simple: It commits the current unit of work, and then
 creates a new one migrating all the objects registered in the commited unit of
 work to the newly created, and still open, unit of work. If this paragraph
@@ -702,28 +703,31 @@ confuses you, looking at its implementation might explain it better.
 It is useful for cases like batch loads or updates,
 where you want to commit changes every ''n'' instances or similar.
 
-[[[caption=Commiting and continuing the Unit Of Work
-	session beginUnitOfWork.
-	10 to: 99 do: [ :index |
-		session register: (
-		Person new
-			firstName: 'Sample';
-			lastName: index printString).
-		(index \\ 10) isZero ifTrue: [
-			session commitUnitOfWorkAndContinue
-		].
+Commiting and continuing the Unit Of Work: 
+[[[
+session beginUnitOfWork.
+10 to: 99 do: [ :index |
+	session register: (
+	Person new
+		firstName: 'Sample';
+		lastName: index printString).
+	(index \\ 10) isZero ifTrue: [
+		session commitUnitOfWorkAndContinue
 	].
-	session commitUnitOfWork.
+].
+session commitUnitOfWork.
 ]]]
 
-We can cleanup the sample instances by running:
-[[[caption=Delete using a where clause
+We can cleanup (delete) some sample instances by running:
+[[[
 session inUnitOfWorkDo: [
 		session
 			delete: Person
 			where: [:each | each firstName = 'Sample'].
 ].
 ]]]
+
+
 
 
 !! Glorp Configurations and Additional Concepts

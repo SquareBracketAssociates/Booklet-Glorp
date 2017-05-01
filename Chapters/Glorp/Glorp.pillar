@@ -476,7 +476,14 @@ session createTables
 And ''voilà'', it will send the required commands to the database to create our tables,
 sequences, constraints and so on.
 
-!!! Transactions and ''Unit of Work''
+
+
+
+
+
+
+
+!! Transactions and ''Unit of Work''
 
 If you worked with RDBMS's before, you know you can use transactions that
 detach you from immediate writes to the database files, and enable you to
@@ -489,7 +496,7 @@ This ''UnitOfWork'' keeps track of all the persisted objects, enabling
 you to commit or rollback changes ""at the object level"" while maintaining
 the database transaction in sync with it.
 
-!!! Saving New Instances
+!!!Saving New Instances
 
 To save instances,  we should send the message ==register: anInstance== to a session.
 Note that this operation should occur within a Unit of Work using the message
@@ -519,13 +526,13 @@ Note that if we are registering an object that was read in a previous unit of
 work, the object cannot be modified prior to registration in the current
 unit of work.
 
-!!! Reading Instances
+!!! Reading instances
 
 We can now read back some of the persisted instances. Again we use
 the session object, sending it the message ==read:== and the class as argument.
 This will return a collection of results.
 
-We will return all read all instances of ==Person==
+The following expression returns all read all instances of ==Person==:
 [[[
 session read: Person
 ]]]
@@ -534,39 +541,55 @@ Of course you don't always read all the instances from the database but
 want to filter the results. For that you can pass a block that will act as
 a filter.
 
-[[[caption=Read all instances of Person matching a criteria|language=smalltalk
+The following expression reads all instances of ==Person== matching a criteria
+[[[
 session
 	read: Person
 	where: [:each | each firstName = 'John'].
 ]]]
 
-This might lead you to think you can pass any block to filter the results
-as you can do with ==select:== in a regular Collection, but that is not the case.
-Glorp uses blocks as a very clever way to build expressions that
-are later converted to SQL by the framework. You can do basic filtering
-using this feature, but keep in mind it doesn't work as a regular block.
-
-Next to regular operators such as ===== and ==>===, you can use some ''special'' selectors
-that get translated to their counterparts SQL operators.
-For instance the ==similarTo:== selector gets converted to SQL's ==LIKE==
-operator. With this we can retrieve all the Persons named ''John''.
-
-[[[caption=Use an operator that gets ''translated''|language=smalltalk
-session
-	read: Person
-	where: [:each | each lastName similarTo: 'Malk%'].
-]]]
+!!!! Reading one instance 
 
 Another convenient way to retrieve a single instance instead of a Collection
 is to use the ==readOneOf:== or ==readOneOf:where:== message in an analogous
 way to ==read:== and ==read:where:==.
 
-!!! Update of Instances
+!!! About blocks
+
+The ==read:where:== message might lead you to think you can pass any block to filter the results
+as you can do with ==select:== in a regular collection, but that is not the case.
+
+Glorp uses blocks as a very clever way to build expressions that
+are later converted to SQL by the framework. You can do basic filtering
+using this feature, but keep in mind it doesn't work as a regular block.
+
+!!!! Translated selectors
+
+Next to regular operators such as ===== and ==>===, you can use some ''special'' selectors
+that get translated to their counterparts SQL operators.
+For instance the ==similarTo:== selector gets converted to SQL's ==LIKE==
+operator. 
+
+
+With this we can retrieve all the Persons with a given last name using an operator that gets ''translated'': 
+[[[
+session
+	read: Person
+	where: [:each | each lastName similarTo: 'Malk%'].
+]]]
+
+
+
+
+
+!!! Update of instances
 
 We can also update one instance, i.e., to read one and update it. We do it
 in the context of a UnitOfWork using the message ==inUnitOfWorkDo:==.
 
-[[[caption=Updating an object read within a UnitOfWork
+
+Updating an object read within a UnitOfWork:
+[[[
 session inUnitOfWorkDo: [
 	| person |
 	person := session

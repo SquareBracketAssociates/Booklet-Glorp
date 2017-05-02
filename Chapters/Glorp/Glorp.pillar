@@ -1408,9 +1408,9 @@ create a few convenience methods:
 [[[
 InvoiceItem class >> description: aString price: aNumber
 	^ self new
-		description: aString;
-		price: aNumber;
-		yourself
+			description: aString;
+			price: aNumber;
+			yourself
 ]]]
 
 [[[
@@ -1425,12 +1425,12 @@ Invoice >> totalPrice
 ]]]
 
 We can now procceed to create an few instances of Invoice. Let's create
-one Invoice for each person in the database with two items describing
+one invoice for each person in the database with two items describing
 donations to the *Pharo Consortium>http://consortium.pharo.org* and
 *Association>http://association.pharo.org* with randomized amounts
 (within a certain range) for each one.
 
-[[[caption=Creating random amount donations
+[[[
 session inUnitOfWorkDo: [
 	(session read: Person) do: [:person |
 		| invoice |
@@ -1493,18 +1493,20 @@ So far we've been querying objects by means of sending ==read:== or
 a particular query, like limiting the number of results, running an aggregate
 function like ==SUM()==, ==AVG()==, ordering the rows at the server side,
 performing subqueries and many other features then the session object
-can't provide you with an API for that.
+doesn't provide you with an API for that.
 
-!!! The Read: message
+!!! The read: message
 Everytime you sent a ==read:== message to the session, the session created a
-simple ==Query== object to read the class passed as parameter, but you can
-instantiate a Query object independently, configure it to fit your needs and
-execute it in the session. Enter the ==Query== object.
+simple ==Query== object to read the class passed as parameter as in the following expression. 
 
 [[[
 (session read: Invoice) executeIn: session
 ]]]
 
+But you can instantiate a Query object independently, configure it to fit your needs and
+execute it in the session. Enter the ==Query== object! 
+
+!!! SimpleQuery
 Let's say we want to know the sum of all the prices of our InvoiceItems,
 we can do that by using the ==retrieve:== method and using an aggregate function
 like ==sum==.
@@ -1515,12 +1517,12 @@ like ==sum==.
 	retrieve: [:each | each price sum ]) executeIn: session.
 ]]]
 
-The retrieve method configures the query to return only the retrieved attributes
+The ==retrieve:== method configures the query to return only the retrieved attributes
 of the read object. The query will return a collection with the objects
 retrieved instead of a collection of instances of the read class.
 
-If we know beforehand that our query will return an single row with a single
-field, i.e. a single object, we can configure the query to return that
+If we know beforehand that our query will return a single row with a single
+field, i.e., a single object, we can configure the query to return that
 object directly by setting ==readsOneObject:== to true.
 
 If you retrieve more than one object then the query will return a collection
@@ -1537,24 +1539,21 @@ The Query object models an SQL ==SELECT== statement, and like that statement
 it can include a ==WHERE==, ==ORDER BY==, ==GROUP BY==, ==HAVING==, etc.
 
 !!!! ''WHERE'' expression
-You can always include a ''where'' expression as you did when reading
-through the session object. Inside the ''where'' expression you can filter by
-attributes of referenced objects.
+You can always include a ''where'' expression as you did when reading through the session object. Inside the ''where'' expression, you can filter by attributes of referenced objects.
 
 [[[
 ((SimpleQuery read: Invoice)
 	where: [:each | each person lastName = 'Goldberg' ]
-	)	executeIn: session
+	) executeIn: session
 ]]]
 
-Or even by interacting with a referenced collection, i.e. retrieving
-only Invoices containing items with a price above 2000.
+Or even by interacting with a referenced collection, i.e., retrieving only Invoices containing items with a price above 2000.
 
 [[[
 ((SimpleQuery read: Invoice)
 	where: [:invoice |
 		invoice items anySatisfy: [ :item |
-			item price > 2000 ]]) executeIn: session.
+			item price > 2000 ]]) executeIn: session
 ]]]
 
 !!!! ''ORDER BY'' expression
@@ -1565,7 +1564,7 @@ criteria.
 ((SimpleQuery read: InvoiceItem)
 	orderBy: [:each | each price descending];
 	orderBy: [:each | each invoice person lastName]
-	) executeIn: session.
+	) executeIn: session
 ]]]
 
 !!!! ''GROUP BY'' expression
@@ -1618,11 +1617,12 @@ expression it lets you implement simple pagination queries.
 	offset: 3) executeIn: session.
 ]]]
 
-!!!! Fetching referenced objects
+!!! Fetching referenced objects
 We mentioned before that when you're querying the Invoices Glorp will
 place a Proxy object for each reference (e.g. Person) it doesn't have in
 the session cache, and then once the Proxy is hit by a message send it will
 materialize it by retrieving its contents by performing a database Query.
+
 Imagine this scenario for at least 1000 Invoices that reference a different
 Person each, that would be 1001 queries and their resulting I/O impact.
 
@@ -1660,11 +1660,11 @@ Retrieving all at once with an OUTER JOIN
 The ==alsoFetch:== is a powerful feature, and can be used in combination with
 all the above described Query attributes (except for ''GROUP BY'').
 
-!!!! Ensuring fresh data
+!!! Ensuring fresh data
 Everytime you read an object inside a Glorp session, it will save it in the
 session cache keyed by an object representing the Primary Key in your database,
 in our example each ClassDescriptor will have a cache keyed by the ==id== field,
-which happens to be our PK in the tables.
+which happens to be our Public Key in the tables.
 
 This is great because, as any proper cache would, it avoids going
 outside of your image to retrieve something from the database,
@@ -1682,7 +1682,8 @@ to read from the Cache and instead always use what is new.
 ((SimpleQuery read: Invoice) shouldRefresh: true) executeIn: session.
 ]]]
 
-!!!!Set operations
+
+!!!Set operations
 In addition to statements that affect the result set of the query,
 you can perform
 *set operations>https://en.wikipedia.org/wiki/Set_operations_%28SQL%29*
@@ -1700,6 +1701,8 @@ between your query and other queries.
 | ==INTERSECT== | ==intersect:== |
 | ==EXCLUDE== | ==minus:== |
 
+!!! Conclusion 
+The SimpleQuery offers powerful logic and you should play with it to understand how to use it. 
 
 
 
@@ -1707,11 +1710,11 @@ between your query and other queries.
 
 
 
+!! Handling inheritance
 
-!! Advanced topics
-!!! Inheritance and polymorphic queries
-If the class ==Parent== has two subclasses named ==LeftChild== and
-==RightChild==, a polymorphic query is one were we can query on the
+In this chapter we will look at how Glorp help us handling object of different subclasses.
+When a class ==Parent== has two subclasses ==LeftChild== and
+==RightChild==, a polymorphic query is one where we can query on the
 ==Parent== class and as a result get instances of ==Parent==, ==LeftChild==
 and ==RightChild==.
 
@@ -1721,15 +1724,17 @@ relational database:
 - A table for each concrete class
 - One table for all classes
 
-Glorp currently supports the the two latest options.
+Glorp currently supports the  two latest options. We will illustrate these two approaches now. 
 
-!!!! A table for each concrete class
-In this method each concrete class has its own table.
+!!! A table for each concrete class
+In this approach each concrete class has its own table.
+
 That table holds all the instance variables for the class.
-For an example of this method we will make the Parent class an abstract class.
-So we need two tables, which we will call ==LEFTCHILDTABLE== and
+As an example of this approach, let us imagine that the Parent class an abstract class.
+Therefore, we need two tables, which we call ==LEFTCHILDTABLE== and
 ==RIGHTCHILDTABLE==.
 
+!!!! Class definitions
 The class definitions are straightforward.
 [[[
 GlorpBookObject subclass: #Parent
@@ -1752,10 +1757,10 @@ Parent subclass: #LeftChild
 	package: 'Glorp-Book'
 ]]]
 
-We'll extend our previous Descriptor System to include the newly created
-classes.
+!!!! System Description
+We'll extend our System Descriptor to include the newly created classes.
 
-Class model for LeftChild
+Class model for ==LeftChild==.
 [[[
 GlorpBookDescriptorSystem >> classModelForLeftChild: aClassModel
 	aClassModel newAttributeNamed: #left.
@@ -1763,7 +1768,8 @@ GlorpBookDescriptorSystem >> classModelForLeftChild: aClassModel
 	aClassModel newAttributeNamed: #id.
 ]]]
 
-Class model for RightChild
+Class model for ==RightChild==.
+
 [[[
 GlorpBookDescriptorSystem >> classModelForRightChild: aClassModel
 	aClassModel newAttributeNamed: #right.
@@ -1771,7 +1777,7 @@ GlorpBookDescriptorSystem >> classModelForRightChild: aClassModel
 	aClassModel newAttributeNamed: #id
 ]]]
 
-Creating the tables
+Describing the tables.
 [[[
 GlorpBookDescriptorSystem >> tableForLEFTCHILDTABLE: aTable
 	(aTable createFieldNamed: 'left_value' type: (platform varChar: 50)).
@@ -1792,15 +1798,17 @@ We introduced ==sequenceTypeNamed:==, that we didn't use before. When using
 ==sequence== or ==serial== datatypes, Glorp will create a database sequence
 for each table if required, but because we're using a type resolver
 with inheritance, it is necessary that all the children classes that use
-a ==serial== datatype share the same sequence. The method ==sequenceTypeNamed:==
-will lookup in the Descriptor System for an existing sequence with that name,
-and if no one was registered before it will instantiate a new one with that name
-and register it for later use.
+a ==serial== datatype share the same sequence. 
 
-So far we created the Class Models for two classes, and a Table Model for each
+The message ==sequenceTypeNamed:== lookups in the Descriptor System for an existing sequence with that name,
+and if no one was registered before it will instantiate a new one with that name and register it for later use.
+
+!!! Handling inheritance
+
+So far we created the class models for two classes, and a table model for each
 one of them, but nothing involving inheritance. Notice we don't have to create a
-Class Model for the ==Parent== class, although we will have to create a
-Class Descriptor for it.
+class model for the ==Parent== class, although we will have to create a
+class descriptor for it.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForParent: aDescriptor
@@ -1808,12 +1816,12 @@ GlorpBookDescriptorSystem >> descriptorForParent: aDescriptor
 ]]]
 
 As you can see, we introduced a concept in the Class Descriptor that
-we never used, explicitly, before: the Type Resolver
-(or ''resolver'' for short).
+we never used, explicitly, before: a Type Resolver (or ''resolver'' for short).
 
+!!!! Type resolver 
 Every Class Descriptor has a ''resolver'' that helps it determine which
-class to instantiate, if Glorp doesn't find one explicitly defined it will
-create an ==IdentityTypeResolver== for your class.
+class to instantiate. If Glorp doesn't find one explicitly defined,  it 
+creates an ==IdentityTypeResolver== for your class.
 
 You can define the resolver for your class by implementing a method
 named ==typeResolverFor''YourClass''== that returns an instance of TypeResolver.
@@ -1825,20 +1833,22 @@ GlorpBookDescriptorSystem >> typeResolverForParent
 ]]]
 
 There are different classes of resolvers:
-;IdentityTypeResolver
+;IdentityTypeResolver 
 :No inheritance
 ;HorizontalTypeResolver
 :Each Class is persisted in a separate table
 ;FilteredTypeResolver
 :All Classes are persisted in the same table
 
-We chosen the ==HorizontalTypeResolver== because we're storing our instances
-in separate tables. ==IdentityTypeResolver== doesn't need further explanation,
+We chose the ==HorizontalTypeResolver== because we're storing our instances
+in separate tables. ==IdentityTypeResolver==  is the default one: it is for the case when there is no inheritance,
+where you map a class to a single table, or more than one table but always for a single class.
 and we will cover ==FilteredTypeResolver== later.
 
+@@todo what is ==IdentityTypeResolver==
+
 Each of the class descriptor methods register a resolver.
-The method typeResolverFor: results
-in a call to typeResolverForParent.
+The method ==typeResolverFor:== results in a call to ==typeResolverForParent==.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForLeftChild: aDescriptor
@@ -1873,20 +1883,26 @@ and ==RightChild== you'll notice we're registering the Descriptor in the
 Type Resolver of the ==Parent== class; both child classes, unless overriden,
 will continue having their default resolver.
 
-[[[caption=Some sample instances
+
+!!! Playing with instances
+
+Now we can play with some sample instances
+[[[
 session inUnitOfWorkDo: [
 	session register: (LeftChild new top: 'Left top'; left: 'I am a left child').
 	session register: (RightChild new top: 'Right top'; right: 'I am a right child').
 ].
 ]]]
 
-With the setup above, we can write queries like the following
-
-[[[caption=Querying the Parent class
-(session read: Parent) "-> an OrderedCollection(a RightChild a LeftChild)"
+With the setup above, we can write queries like the following one which 
+query the ==Parent== class:
+[[[
+(session read: Parent) 
+>>> an OrderedCollection(a RightChild a LeftChild)
 ]]]
 
-[[[caption=We can still write queries directly on the subclasses
+We can still write queries directly on the subclasses
+[[[
 (session read: LeftChild)
 ]]]
 
@@ -1894,22 +1910,22 @@ There is one restriction on polymorphic queries when using
 ==HorizontalTypeResolver== (a table for each Concrete Class) which is one can
 not use ==orderBy:==. The query makes multiple requests to the database as it
 has to read both tables, so we cannot have the database order the results
-for use. As a result the following request will raise an exception.
-[[[caption=Horizontal resolvers can't order
+for use. As a result the following request will raise an exception becausehorizontal resolvers can't order.
+[[[
 ((Query read: Parent) orderBy: #top) executeIn: session
 ]]]
 
-!!!! One table for all classes
-In this method of organizing the tables there is one table that holds the data
+
+!!! One table for all classes
+In this alternate approach for table  organization, there is one table that holds the data
 for all objects in the hierarchy. In this example the one table is called
-==ALL_DATA==. We will include an ==object_type== column used to store the type
+==ALL_DATA==. We include an ==object_type== column used to store the type
 of the object in the row.	This allows GLORP to create an instance of the
 correct class when it reads a row in the table. Note
 that regardless of what type of object is in a row, one column,
 either ==left_value== or ==right_value==, will be ==null==.
 While this method does waste space in the database, performing a polymorphic
-query will be faster as there is only one table to access.
-
+query is faster as there is only one table to access.
 
 We start by describing the new Type Resolver for the ==Parent== class.
 
@@ -1918,8 +1934,8 @@ GlorpBookDescriptorSystem >> typeResolverForParent
 	^FilteredTypeResolver forRootClass: Parent
 ]]]
 
-The class definitions remain the same as in the Table for each Concrete
-Class example. The descriptor changes a bit.
+The class definitions remain the same as in the Table for each concrete
+class example. The descriptor changes a bit.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForParent: aDescriptor
@@ -1934,7 +1950,7 @@ GlorpBookDescriptorSystem >> descriptorForParent: aDescriptor
 		register: aDescriptor abstract: true
 ]]]
 
-We use a different resolver, need to supply values for ==object_type==
+Since we use a different resolver, we need to supply values for ==object_type==
 column and need more information for the ==Parent== class.
 
 [[[
@@ -1956,10 +1972,7 @@ GlorpBookDescriptorSystem >> descriptorForLeftChild: aDescriptor
 
 Note how to indicate the value of the ==object_type== column for
 ==LeftChild== objects with the resolver.
-The argument for the ==keyedBy:== parameter
-is the String =='L'== but it could be any String of your preference,
-like the class name. Keep in mind that the shorter the key, the less
-storage space it will take, and also less bandwidth used.
+The argument for the ==keyedBy:== parameter is the String =='L'== but it could be any String of your preference, like the class name. Keep in mind that the shorter the key, the less storage space it will take, and also less bandwidth used.
 
 [[[
 GlorpBookDescriptorSystem >> descriptorForRightChild: aDescriptor
@@ -1978,8 +1991,8 @@ GlorpBookDescriptorSystem >> descriptorForRightChild: aDescriptor
 		field: (rightTable fieldNamed: 'object_type').
 ]]]
 
-Even though Parent is still an abstract class Glorp requires us to given
-the mappings for the Parent instance variables. If Parent were not abstract
+Even though ==Parent== is still an abstract class, Glorp requires us to given
+the mappings for the ==Parent== instance variables. If ==Parent== were not abstract
 we would have to provide a key value for the column ==object_type==.
 
 [[[
@@ -2001,24 +2014,25 @@ class attributes as the parent Descriptor.
 
 
 !! Under the hood
+
 !!! How Glorp expressions work
 At this point you might have noticed that we use blocks in many places
 to specify the ''where'' expression, ''retrieve'' a particular field, ''order''
-the results, and many other things. Although we use blocks for the convenience
-and readability they provide, once assigned to a Glorp object like
-==SimpleQuery== it will convert the block to a ''Glorp expression'', depending
+the results, and many other things. 
+
+Although we use blocks for the convenience and readability they provide, once assigned to a Glorp object such as 
+==SimpleQuery==, Glorp converts the block to a ''Glorp expression'', depending
 on the context it may be any of the subclasses of ==GlorpExpression==.
 
-[[[caption=A simple expression
+[[[
 query where: [:each | each attribute > 100]
 ]]]
 
-To convert the block to an expression, it passes a ==MessageArchiver== as the
-first argument of the block, the ''message archiver''
-will intercept all the message sends vía ==doesNotUnderstand:==,
+To convert the block to an expression, Glorp passes a ==MessageArchiver== as the
+first argument of the block, the ''message archiver'' will intercept all the message sends vía ==doesNotUnderstand:== hook,
 and will return another archiver, so the next message send is handled by the
 new archiver and so on. With this strategy it will construct a tree
-of instances ==GlorpExpression==.
+of instances of ==GlorpExpression==.
 
 Using ''each'' as the block argument name can be misleading, but it is used
 by convention, but it has more sense in the context of a filtering expression
@@ -2029,21 +2043,22 @@ it is possible that some selectors will be highlighted by Pharo as not
 implemented, in particular salectors that are used to instantiate
 ==FunctionExpression=='s.
 
-!!!! About special selectors
+!!! About special selectors
 When writing blocks that involve more than one condition, we don't use
 ==and:== nor ==or:== selectors, and instead we use ==AND:== and ==OR:==
 respectively. The same applies for ==isNil== and ==notNil==. This is so
 because the compiler optimizes certain message sends, including the ones
 mentioned before.
 
-[[[caption=Special selectors
+Example of special selectors:
+[[[
 query where: [:each |
  each attributeOne > 100 OR: [
 	each attributeTwo notNIL AND: [
 		each attributeThree isNIL ] ] ]
 ]]]
 
-!!!! Function expressions
+!!! Function expressions
 The special selectors mentioned before are nothing but a particular case of a
 ==FunctionExpression==, but as those there are many others, consider the
 following Glorp query:
@@ -2053,17 +2068,16 @@ SimpleQuery read: Person where: [:each |
 	each lastName asUppercase similarTo: 'GOLD%' ]
 ]]]
 
-You can see there that we send the ==asUppercase== message to the lastName
-''attribute'' and then ==similarTo:== to that result.
-The previous query will produce something like this:
+You can see there that we send the ==asUppercase== message to the ==lastName==
+''attribute'' and then ==similarTo:== to that result. The previous query will produce something like this:
 
-[[[language=sql
+[[[
 SELECT * FROM Person WHERE UPPER(lastName) LIKE 'GOLD%'
 ]]]
 
 It is very likely that the ==similarTo:== selector will be highlighted
 as missing or not implemented in the current image. This is so because
-the ==MessageArchiver==	will resolve the symbol to an instance of one
+the ==MessageArchiver== will resolve the symbol to an instance of one
 of the subclasses of ==FunctionExpression==. It achieves it by rebuilding
 the ''archiver'' as it consumes the selectors, you can find how it does by
 looking for the implementors of ==rebuildOn:startingFrom:withOuterScopeBase:==.
@@ -2080,10 +2094,10 @@ or by adding them to your current platform. Also you can read there the list
 of available symbol functions and their default mapping to SQL functions.
 
 !!! Glorp class model diagram
-The following diagram provides an outline of the most important classes and
+The following diagram *@glorpObjectModel* provides an outline of the most important classes and
 attributes of Glorp's object model.
 
-+Glorp objects UML Diagram>file://figures/Glorp-Model.png|width=72|label=Glorp object model diagram+
++Glorp objects UML Diagram>file://figures/Glorp-Model.png|width=72|label=glorpObjectModel+
 
 !! Appendix A: Basic Relational Databases Concepts
 !!! Tables
@@ -2104,7 +2118,7 @@ primary key.
 In the context of a relational database, a row —also called a ''record'' or
 ''tuple''— represents a single, implicitly structured data item in a table.
 In simple terms, a database table can be thought of as consisting of rows
-and columns or fields.[1] Each row in a table represents a set of related data,
+and columns or fields. Each row in a table represents a set of related data,
 and every row in the table has the same structure.
 
 !!! Columns
@@ -2135,8 +2149,7 @@ entity integrity and referential integrity.
 
 !!!! Primary Key
 
-A primary key uniquely specifies a tuple within a table. In
-order for an attribute to be a good primary key it must not repeat. While
+A primary key uniquely specifies a tuple within a table. In order for an attribute to be a good primary key it must not repeat. While
 natural attributes (attributes used to describe the data being entered) are
 sometimes good primary keys, surrogate keys are often used instead.
 
@@ -2211,8 +2224,10 @@ record in table A with every record in table B) and then returning all records
 which satisfy the join predicate. Actual SQL implementations normally use other
 approaches, such as hash joins or sort-merge joins, since computing the
 Cartesian product is slower and would often require a prohibitively large memory
-space to store. !!!!! OUTER JOINs The joined table retains each record—even if
-no other matching record exists. Outer joins subdivide further into left outer
+space to store. 
+
+!!!!! OUTER JOINs 
+The joined table retains each record—even if no other matching record exists. Outer joins subdivide further into left outer
 joins, right outer joins, and full outer joins, depending on which table's rows
 are retained (left, right, or both).
 
@@ -2230,7 +2245,7 @@ employees that have not been assigned to a department (contrary to the
 inner-join example above, where unassigned employees were excluded from the
 result).
 
-!!! Data Manipulation Language (DML) queries
+!!! Data manipulation language (DML) queries
 
 !!!! SELECT
 

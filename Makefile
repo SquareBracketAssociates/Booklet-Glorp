@@ -1,4 +1,4 @@
-MAIN = book
+MAIN = glorp
 CHAPTERS = \
 	Chapters/Glorp/Glorp \
 

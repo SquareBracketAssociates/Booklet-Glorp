@@ -12,6 +12,7 @@ deploy:
   provider: releases
   api_key:
     secure: iWP9B3PUJZmYWDm8YvdVpUswQB8lgjEbLCR8q+msZSi0zTL6Vo/nnZZ6CXD+4xFZfA1fZjSMP8PLR+0mqo/fUkDOfvlZOfm8MWPNtx9ckmYGOsoU58jmln2vx7ZK/HbLTIZ3IBkXj0GX3YQ0Y2OvwmA9ouAmZy3B6d5Tk1YWZUirgHYwUWAYqi5S07Dxaf804YVY8IzMqP9LZ3Rch4BOk463QNAZfSwdnZbeciW3UZAvDAXE7aLgu04Q62MJbG3VbJ+GXcurdO8o87E+0xfoN2QSu6MfEyXNvdPUB/I994d13i0te46egftM+7EN7UZZ9aiAfIVHNO8Ewk6B32Hm+0xuPJyyNVSmDIVhT6Hwnrb1MVFvq4HHFY5SaSs9uNRZKfVfXrTUj5+o9PveNYFRNLhSAug6K2E8CMBIdmcH2eFSBpqUjTBHYTPZ7sMJdIzZUbMlcAC78euMAyrK7yCcqRmuo36/S4wfR8aJ6HkccBw8J+MD7kSdDPTqzUfww6Fv9Kv18r6YlBrERwRfTbCivBzED1dKlxLvEQXIKbisFhwXFzIFE2J6xWFi5yogoLK2o16nQ+PDSQNtO6hV352y9yE7w2nNBaHiVd6i5UsA3frLujeB0rnpIU+0qIZ84GX4EJm1G7xnisTpox/D4l6rwxqLg4/3eSLom9uVeEg0tdU=
-  file: build/book.spiral.pdf
+  file: build/glorp.spiral.pdf
+  draft: true
   on:
-    branch: master
+    repo: SquareBracketAssociates/Booklet-Glorp

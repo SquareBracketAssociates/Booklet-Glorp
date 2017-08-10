@@ -5,4 +5,4 @@
 [travis]: https://travis-ci.org/SquareBracketAssociates/Booklet-Glorp
 [badge]: https://travis-ci.org/SquareBracketAssociates/Booklet-Glorp.svg?branch=master
 
-PDF is available in release tab above
+The book is available in PDF in [the releases tab](https://github.com/SquareBracketAssociates/Booklet-Glorp/releases).

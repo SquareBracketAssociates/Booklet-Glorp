@@ -1,5 +1,7 @@
 # A booklet on the Glorp object-relational mapper
 
+We are currently experimenting with a new makefile. So the build is broken. 
+
 [![Build status][badge]][travis]
 
 [travis]: https://travis-ci.org/SquareBracketAssociates/Booklet-Glorp

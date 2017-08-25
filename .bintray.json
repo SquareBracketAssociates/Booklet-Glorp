@@ -1,0 +1,27 @@
+{
+    "package": {
+        "name": "booklet-glorp",
+        "repo": "wip",
+        "subject": "squarebracketassociates",
+        "desc": "Smacc",
+        "licenses": ["MIT"],
+        "website_url": "https://github.com/SquareBracketAssociates/Booklet-Glorp",
+        "issue_tracker_url": "https://github.com/SquareBracketAssociates/Booklet-Glorp/issues",
+        "vcs_url": "https://github.com/SquareBracketAssociates/Booklet-Glorp.git",
+        "labels": ["work-in-progress"]
+    },
+
+    "version": {
+        "name": "latest",
+        "desc": "Latest successful build"
+    },
+
+    "files": [
+        {
+            "includePattern": "build/(glorp).spiral.pdf",
+            "uploadPattern": "$1-wip.pdf",
+            "matrixParams": { "override": 1 }
+        }
+    ],
+    "publish": true
+}

@@ -6,4 +6,4 @@ help:
 	@echo "  make bootstrap"
 
 bootstrap:
-	wget --quiet --output-document=- 'https://raw.githubusercontent.com/pillar-markup/pillar/master/download.sh' | bash
+	wget --quiet --output-document=- 'https://raw.githubusercontent.com/pillar-markup/pillar/master/download.sh' | bash -s $$*

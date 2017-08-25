@@ -2,6 +2,7 @@ sudo: required
 services:
   - docker
 
+before_install: sudo apt-get install -y tree
 install: docker pull dpollet/texlive:pillar
 
 script: >
@@ -9,6 +10,8 @@ script: >
     --volume $PWD:/work
     dpollet/texlive:pillar
     bash -c "make bootstrap && make spiralbook"
+
+after_failure: tree -a
 
 deploy:
 - provider: bintray

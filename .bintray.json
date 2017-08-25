@@ -3,7 +3,7 @@
         "name": "booklet-glorp",
         "repo": "wip",
         "subject": "squarebracketassociates",
-        "desc": "Smacc",
+        "desc": "the Glorp object-relational mapper",
         "licenses": ["MIT"],
         "website_url": "https://github.com/SquareBracketAssociates/Booklet-Glorp",
         "issue_tracker_url": "https://github.com/SquareBracketAssociates/Booklet-Glorp/issues",

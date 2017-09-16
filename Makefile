@@ -1,8 +1,5 @@
 .DEFAULT_GOAL = help
 
-CHAPTERS = \
-	Chapters/Glorp/Glorp \
-
 # Redirect to bootstrap makefile if pillar is not found
 PILLAR ?= $(wildcard pillar)
 ifeq (,$(PILLAR))

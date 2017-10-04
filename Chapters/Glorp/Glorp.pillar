@@ -81,12 +81,6 @@ Metacello new
    load: 'glorp'.
 ]]]
 
-And then set the driver to be used
-
-[[[
-PharoDatabaseAccessor DefaultDriver: P3DatabaseDriver.
-]]]
-
 !!!! Glorp packages for Garage
 Glorp provides a Metacello configuration configured to load the core classes
 and/or its tests.
@@ -365,6 +359,13 @@ To define it as the default driver we must execute once the following expression
 "Run this once"
 GAGlorpDriver beGlorpDefaultDriver.
 ]]]
+
+When using P3, this is not necessary, instead execute:
+
+[[[
+PharoDatabaseAccessor DefaultDriver: P3DatabaseDriver.
+]]]
+
 
 !!! Login
 All the information necessary to connect to the database is defined in an instance of the

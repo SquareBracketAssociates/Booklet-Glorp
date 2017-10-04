@@ -60,12 +60,34 @@ because all the implemented drivers will conform to the common Garage API.
 There are many drivers available drivers in different versions of Pharo, as
 the time of writing this, these are the currently supported drivers are:
 
+- P3 (Native PostgreSQL v3 protocol)
 - Garage
 -- PostgreSQL (Native)
 -- MySQL (Native)
 - UDBC SQLite3
 
-!!!! Glorp packages
+!!!! Glorp with P3
+P3 is a modern, lean and mean PostgreSQL client for Pharo.
+
+P3Client uses frontend/backend protocol 3.0 (PostgreSQL version 7.4 [2003] and later), implementing the simple query cycle. It supports plaintext and md5 password authentication. When SQL queries return row data, it efficiently converts incoming data to objects. P3Client supports most common PostgreSQL types.
+
+More information can be found at *its repository>https://github.com/svenvc/P3*.
+To load it first install it through Metacello.
+
+[[[
+Metacello new
+   baseline: 'P3';
+   repository: 'github://svenvc/P3';
+   load: 'glorp'.
+]]]
+
+And then set the driver to be used
+
+[[[
+PharoDatabaseAccessor DefaultDriver: P3DatabaseDriver.
+]]]
+
+!!!! Glorp packages for Garage
 Glorp provides a Metacello configuration configured to load the core classes
 and/or its tests.
 
@@ -234,7 +256,7 @@ Here we describe the class model for the ==Person== class.
 [[[
 GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
 	aClassModel newAttributeNamed: #id.
-	aClassModel newAttributeNamed: #fistName.
+	aClassModel newAttributeNamed: #firstName.
 	aClassModel newAttributeNamed: #lastName.
 	aClassModel newAttributeNamed: #birthDate
 ]]]

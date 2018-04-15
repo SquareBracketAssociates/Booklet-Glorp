@@ -18,7 +18,7 @@
 
     "files": [
         {
-            "includePattern": "build/(glorp).spiral.pdf",
+            "includePattern": "_result/pdf/(glorp).spiral.pdf",
             "uploadPattern": "$1-wip.pdf",
             "matrixParams": { "override": 1 }
         }

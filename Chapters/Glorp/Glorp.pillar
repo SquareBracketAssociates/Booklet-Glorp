@@ -410,7 +410,7 @@ login secure: true
 If everything goes fine, then executing ==accessor isLoggedIn== should answer
 ''true''. 
 
-[[[
+[[[testcase=true
 accessor isLoggedIn
 >>> true
 ]]]
@@ -1919,7 +1919,7 @@ session inUnitOfWorkDo: [
 
 With the setup above, we can write queries like the following one which 
 query the ==Parent== class:
-[[[
+[[[testcase=true
 (session read: Parent) 
 >>> an OrderedCollection(a RightChild a LeftChild)
 ]]]

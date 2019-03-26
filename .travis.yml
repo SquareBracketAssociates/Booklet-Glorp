@@ -23,17 +23,12 @@ install:
   
 script:
   - ./pillar/build/pillar build pdf
-deploy:
-- provider: bintray
-  file: .bintray.json
-  on: { repo: SquareBracketAssociates/Booklet-Glorp }
-  skip_cleanup: true
-  user: ducasse
-  key:
-    secure: mHm1sNZ+23rSjpt6CkGos0VGeRUKv3d+Roc/NKqTZS1WziXND0Dpn7s/stvU56dBCDLRzweohpX0UqhqNX79rOIqfOzdedoaM7UylF9ZxQ0jb768uE7rDDNpYBG4K/uHkkH0RehRrRrRd0uH46G8B5loPSjJMowClHKZ907SN5D+79E40GvYoAiF188zX7YXM0egVZFn5KadDLEP/R8az9wlooaCZ4/+53yFltLdft2RRRGbHjbfXt3YCBB2qVqGdpuhxk4T4g4OguaXu7pCCCXkOIxabBIWZtk7HXG4AiqBoK5l0DTstIYFvaL6/VI7lrE0I5NKs/3rTSXhRUmgXAiEwQ3CviDhwsCxNGbLjUENzhwNCq3qK8JX5ZLNTdhyU5q3WBZokCRTO/q01zFdR0ZCbPRutbifC7bckIBUtoigpQXQJB+Da2doCv+omiQYgohDQydM8qjDUXwgX+kcTPrgGWo+/4u2ZL6kacPcYMK9UOImGPVOIQI+Q2VCCMTL3zt4iXnT18E9eETQF6cUCrcwyYxUs/UOW1rytAf5gVa6gcqH57j/fxq4Gl4zlNwgN4Q2bkGSdflVBMNhiVpq29yljKJ+4Vuzngu1mpdqeYnMzkM3zvF0DUEasLmHL4aHH/iQdwQ3vfPehNoFKsKymozC4KX3Z1YoB/NXxW8hWgE=
-- provider: releases
-  file: build/glorp.spiral.pdf
-  on: { tags: true }
-  skip_cleanup: true
-  api_key:
-    secure: pRfu3fr35BzqQDi1ul0SubPSwO8zcyIidqLRZPz3XIrH4qoy1Zgnq785dmB7ziNQqH+VJyh7askSFY3JLxL0d4P0eUgj2ZDIOhJsUQQ/ihevOBWbxlMOoEPjQfzA11l8WrNCQ566KrcYiISRi7bCg698kPTWSRwOmmvqXOJe5zGkuUbVmMNUV2oxaNV4JC8kVyVWHYy0nNMLEX/hzRZRh1+8K34/ds+fZ7irLrbDWMbKGHCyuLCSqv+zJJdu99nWLTclrCxFzK4DEHaMlFiO7wkUpyQLwZ38EDnb3E7iv045jSqCx3XB+DMRG1Da2/9BIXl0mho5ELdEvfGVAbjI2no5FWd0H1cs4/banAePCFnM7ZscJBaPWgVajB7EzrcADJUoxpmU6+6n1aIC3CnjscfAHqSAKGv8CO/Jh+Uirc8ATRpSqa73f2Nnj9tRCqwCOnFOCEzu0w5l3Ppz2Qpif04P+QbebZehSVaBJ4W01R2i8Rac3IuZDhZVaek1X24HFxUOd/rvHpbhz8eeANdnsWCTkAm+0sD+iKsWKICRMxFZfCK/SPldAcjXZsOsEMTqfx7ZWyCc7GeesQWcmW+z3shziyQd9tdeArJWLwacly3hH3WeyuUD5JyPF9klvDBtHgTVajdU4yp+3oXsrtTmetnBz+RESxQGdLgZRlQBQog=
+
+after_success:
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - mv _result/pdf/glorp.pdf glorp-wip.pdf
+  - bash upload.sh  glorp-wip.pdf
+
+branches:
+  except:
+    - /^(?i:continuous)$/

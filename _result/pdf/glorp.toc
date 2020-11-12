@@ -1,0 +1,122 @@
+\changetocdepth {1}
+\contentsline {chapter}{Illustrations}{iii}{section*.1}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {1}What is Glorp?}{3}{chapter.1}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {2}Installation}{5}{chapter.2}
+\contentsline {section}{\numberline {2.1}Database server}{5}{section.2.1}
+\contentsline {section}{\numberline {2.2}Database drivers}{5}{section.2.2}
+\contentsline {subsection}{Native drivers}{5}{section*.2}
+\contentsline {subsection}{Library wrapper drivers (FFI)}{6}{section*.3}
+\contentsline {subsection}{A common driver API}{6}{section*.4}
+\contentsline {subsection}{Available drivers}{6}{section*.5}
+\contentsline {subsection}{Glorp with P3}{6}{section*.6}
+\contentsline {subsection}{Glorp packages for Garage}{7}{section*.7}
+\contentsline {subsection}{Glorp with UDBC / SQLite3}{8}{section*.8}
+\contentsline {subsection}{Running the tests}{8}{section*.9}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {3}Person: Our First Example Class}{9}{chapter.3}
+\contentsline {section}{\numberline {3.1}Class definition}{9}{section.3.1}
+\contentsline {section}{\numberline {3.2}Instance methods}{9}{section.3.2}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {4}Defining a DescriptorSystem}{11}{chapter.4}
+\contentsline {section}{\numberline {4.1}Defining a DescriptorSystem subclass}{11}{section.4.1}
+\contentsline {subsection}{Class Model}{12}{section*.10}
+\contentsline {subsection}{Table Model}{12}{section*.11}
+\contentsline {subsection}{Expressing mappings}{13}{section*.12}
+\contentsline {section}{\numberline {4.2}Creating tables}{13}{section.4.2}
+\contentsline {section}{\numberline {4.3}Database Accessor}{14}{section.4.3}
+\contentsline {section}{\numberline {4.4}Login}{14}{section.4.4}
+\contentsline {subsection}{Verifying the connectivity.}{15}{section*.13}
+\contentsline {section}{\numberline {4.5}Session object}{15}{section.4.5}
+\contentsline {subsection}{How the Parts Play Together}{15}{section*.14}
+\contentsline {subsubsection}{About the \textit {Platform}.}{16}{section*.15}
+\contentsline {section}{\numberline {4.6}Saving/Updating/Deleting Objects}{16}{section.4.6}
+\contentsline {subsection}{Creating Tables}{16}{section*.16}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {5}\textit {Unit of Work} and Transactions}{17}{chapter.5}
+\contentsline {section}{\numberline {5.1}Saving New Instances}{17}{section.5.1}
+\contentsline {section}{\numberline {5.2}Reading instances}{18}{section.5.2}
+\contentsline {subsection}{Reading one instance }{18}{section*.17}
+\contentsline {section}{\numberline {5.3}About blocks}{18}{section.5.3}
+\contentsline {subsection}{Translated selectors}{19}{section*.18}
+\contentsline {section}{\numberline {5.4}Object update}{19}{section.5.4}
+\contentsline {section}{\numberline {5.5}Object deletion }{19}{section.5.5}
+\contentsline {section}{\numberline {5.6}Transactions}{20}{section.5.6}
+\contentsline {subsection}{Rolling back changes}{20}{section*.19}
+\contentsline {subsection}{Manually managing transaction}{20}{section*.20}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {6}Glorp Configurations and Additional Concepts}{23}{chapter.6}
+\contentsline {section}{\numberline {6.1}Class models}{23}{section.6.1}
+\contentsline {section}{\numberline {6.2}Attribute properties}{24}{section.6.2}
+\contentsline {section}{\numberline {6.3}Table model}{24}{section.6.3}
+\contentsline {subsection}{Adding fields to the table}{25}{section*.21}
+\contentsline {section}{\numberline {6.4}Mappings (aka \textit {Descriptor})}{26}{section.6.4}
+\contentsline {subsection}{Direct mapping.}{27}{section*.22}
+\contentsline {subsection}{1:1 relationships.}{27}{section*.23}
+\contentsline {subsection}{1:N relationships.}{27}{section*.24}
+\contentsline {subsection}{N:M relationships.}{27}{section*.25}
+\contentsline {section}{\numberline {6.5}Common properties of relationship mappings}{28}{section.6.5}
+\contentsline {subsection}{Reference Classes.}{28}{section*.26}
+\contentsline {subsection}{Exclusivity.}{28}{section*.27}
+\contentsline {subsection}{Collection type.}{28}{section*.28}
+\contentsline {subsection}{Proxy.}{29}{section*.29}
+\contentsline {section}{\numberline {6.6}A Word about Proxies.}{29}{section.6.6}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {7}Extending our Basic Example}{31}{chapter.7}
+\contentsline {section}{\numberline {7.1}Domain classes}{31}{section.7.1}
+\contentsline {section}{\numberline {7.2}Class Model Declarations}{32}{section.7.2}
+\contentsline {subsection}{Table Declarations}{33}{section*.30}
+\contentsline {section}{\numberline {7.3}Mapping declarations}{35}{section.7.3}
+\contentsline {subsubsection}{Address}{35}{section*.31}
+\contentsline {subsubsection}{Invoice}{35}{section*.32}
+\contentsline {subsubsection}{InvoiceItem}{36}{section*.33}
+\contentsline {subsubsection}{Person}{36}{section*.34}
+\contentsline {section}{\numberline {7.4}Sample data}{37}{section.7.4}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {8}The Query object}{41}{chapter.8}
+\contentsline {section}{\numberline {8.1}The read: message}{41}{section.8.1}
+\contentsline {section}{\numberline {8.2}SimpleQuery}{41}{section.8.2}
+\contentsline {section}{\numberline {8.3}Attributes of queries}{42}{section.8.3}
+\contentsline {subsection}{\textit {WHERE} expression}{42}{section*.35}
+\contentsline {subsection}{\textit {ORDER BY} expression}{42}{section*.36}
+\contentsline {subsection}{\textit {GROUP BY} expression}{43}{section*.37}
+\contentsline {subsection}{\textit {LIMIT} and \textit {OFFSET} expressions}{43}{section*.38}
+\contentsline {section}{\numberline {8.4}Fetching referenced objects}{44}{section.8.4}
+\contentsline {section}{\numberline {8.5}Ensuring fresh data}{44}{section.8.5}
+\contentsline {section}{\numberline {8.6}Set operations}{45}{section.8.6}
+\contentsline {section}{\numberline {8.7}Conclusion }{45}{section.8.7}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {9}Handling inheritance}{47}{chapter.9}
+\contentsline {section}{\numberline {9.1}A table for each concrete class}{47}{section.9.1}
+\contentsline {subsection}{Class definitions}{47}{section*.39}
+\contentsline {subsection}{System Description}{48}{section*.40}
+\contentsline {section}{\numberline {9.2}Handling inheritance}{49}{section.9.2}
+\contentsline {subsection}{Type resolver }{49}{section*.41}
+\contentsline {section}{\numberline {9.3}Playing with instances}{50}{section.9.3}
+\contentsline {section}{\numberline {9.4}One table for all classes}{51}{section.9.4}
+\contentsline {subsection}{About inheritance with Type Resolvers}{52}{section*.42}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {10}Under the hood}{55}{chapter.10}
+\contentsline {section}{\numberline {10.1}How Glorp expressions work}{55}{section.10.1}
+\contentsline {section}{\numberline {10.2}About special selectors}{56}{section.10.2}
+\contentsline {section}{\numberline {10.3}Function expressions}{56}{section.10.3}
+\contentsline {section}{\numberline {10.4}Glorp class model diagram}{57}{section.10.4}
+\needspace {3\baselineskip }
+\contentsline {chapter}{\chapternumberline {11}Appendix A: Basic Relational Databases Concepts}{59}{chapter.11}
+\contentsline {section}{\numberline {11.1}Tables}{59}{section.11.1}
+\contentsline {section}{\numberline {11.2}Rows}{59}{section.11.2}
+\contentsline {section}{\numberline {11.3}Columns}{60}{section.11.3}
+\contentsline {section}{\numberline {11.4}Constraints}{60}{section.11.4}
+\contentsline {subsection}{Primary Key}{60}{section*.43}
+\contentsline {subsection}{Foreign Keys}{61}{section*.44}
+\contentsline {section}{\numberline {11.5}Indexes}{61}{section.11.5}
+\contentsline {section}{\numberline {11.6}Relations}{61}{section.11.6}
+\contentsline {subsection}{Joins}{61}{section*.45}
+\contentsline {subsection}{INNER JOINs}{61}{section*.46}
+\contentsline {subsubsection}{OUTER JOINs }{62}{section*.47}
+\contentsline {section}{\numberline {11.7}Data manipulation language (DML) queries}{62}{section.11.7}
+\contentsline {subsection}{SELECT}{62}{section*.48}
+\contentsline {subsection}{INSERT}{63}{section*.49}
+\contentsline {subsection}{UPDATE}{63}{section*.50}
+\contentsline {subsection}{DELETE}{63}{section*.51}

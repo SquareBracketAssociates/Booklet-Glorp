@@ -1,12 +1,6 @@
 # A booklet on the Glorp object-relational mapper
 
-We are currently experimenting with a new makefile. So the build is broken. 
-
-[![Build status][badge]][travis]
-
-[travis]: https://travis-ci.org/SquareBracketAssociates/Booklet-Glorp
-[badge]: https://travis-ci.org/SquareBracketAssociates/Booklet-Glorp.svg?branch=master
+[![Download PDF](https://img.shields.io/badge/Download-PDF-9cf.svg)](https://github.com/SquareBracketAssociates/Booklet-Glorp/releases/download/latest/glorp.pdf)
+[![Centralized book generation](https://github.com/SquareBracketAssociates/Booklet-Glorp/actions/workflows/main.yml/badge.svg)](https://github.com/SquareBracketAssociates/Booklet-Glorp/actions/workflows/main.yml)
 
 The book is available in PDF in [the releases tab](https://github.com/SquareBracketAssociates/Booklet-Glorp/releases).
-
-The result from the latest successful Travis build can be found the releases panel of this page.

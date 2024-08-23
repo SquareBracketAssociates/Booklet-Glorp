@@ -15,7 +15,6 @@ Glorp is a full-featured ORM which offers a number of features to reduce the _im
 
 ## Installation
 
-
 ### Database server
 
 Before installing Glorp you should already have installed the RDBMS of your choice on your machine or a reacheable server, it could be [PostgreSQL (http://postgresql.org)](http://postgresql.org), [MySQL (http://dev.mysql.com/)](http://dev.mysql.com/), [SQLite (http://sqlite.org)](http://sqlite.org), or any other of your preference (as long it is supported). Hereafter we will refer to this RDBMS of your choice as the _Platform_.
@@ -51,7 +50,7 @@ There are plenty of drivers available in Pharo, however those drivers have
 different API's making their use not directly interchangeable. Making it hard
 to migrate to a different driver or to simultaneously support different RDBMS.
 
-To solve that there is Garage \(aka _Garage Drivers_\), that provides a common
+To solve that there is Garage (aka _Garage Drivers_), that provides a common
 API for the different driver implementations. Garage is Pharo's analogous to
 ODBC, JDBC or ADO.NET drivers.
 
@@ -66,10 +65,10 @@ because all the implemented drivers will conform to the common Garage API.
 There are many drivers available drivers in different versions of Pharo, as
 the time of writing this, these are the currently supported drivers are:
 
-- P3 \(Native PostgreSQL v3 protocol\)
+- P3 (Native PostgreSQL v3 protocol)
 - Garage
-  - PostgreSQL \(Native\)
-  - MySQL \(Native\)
+  - PostgreSQL (Native)
+  - MySQL (Native)
 - UDBC SQLite3
 
 
@@ -77,7 +76,7 @@ the time of writing this, these are the currently supported drivers are:
 
 P3 is a modern, lean and mean PostgreSQL client for Pharo.
 
-P3Client uses frontend/backend protocol 3.0 \(PostgreSQL version 7.4 \[2003\] and later\), implementing the simple query cycle. It supports plaintext and md5 password authentication. When SQL queries return row data, it efficiently converts incoming data to objects. P3Client supports most common PostgreSQL types.
+P3Client uses frontend/backend protocol 3.0 (PostgreSQL version 7.4 [2003] and later), implementing the simple query cycle. It supports plaintext and md5 password authentication. When SQL queries return row data, it efficiently converts incoming data to objects. P3Client supports most common PostgreSQL types.
 
 More information can be found at [its repository](https://github.com/svenvc/P3).
 To load it first install it through Metacello.
@@ -104,8 +103,7 @@ Metacello new
 ```
 
 
-It may be the case that you want to load Garage in an alpha version, in such case, you should load the most recent version instead of a stable version 
-that may be not defined for a alpha stream.
+It may be the case that you want to load Garage in an alpha version, in such case, you should load the most recent version instead of a stable version that may be not defined for an alpha stream.
 
 One package is the `Glorp-Core` and there is also a `Glorp-Tests` package.
 
@@ -113,7 +111,7 @@ One package is the `Glorp-Core` and there is also a `Glorp-Tests` package.
 
 
 Glorp may also be configured to work directly with the UDBC SQLite3
-driver in Pharo 5 \(instead of the Garage drivers\):
+driver in Pharo 5 (instead of the Garage drivers):
 
 ```
 Gofer it	 
@@ -233,14 +231,14 @@ related to persistence and don't require you to inherit from a
 particular class.
 
 Glorp models all the involved concepts \(such as tables, columns, classes, etc.\)
-as first class objects, and then links instances of those objects in a `DescriptorSystem`.
+as first-class objects, and then links instances of those objects in a `DescriptorSystem`.
 It is the core of a Glorp system, it holds all the Glorp metadata,
 such as the Tables, Descriptors and Class Models.
 
 
 By using a separate artifact \(in this case, a class\) to define all
 the metadata of your system, you can decouple your business models
-from their persistence information.
+from their persistent information.
 This separation of concerns is a good practice,
 and helps with the maintainability of your code.
 
@@ -374,8 +372,8 @@ power of the Glorp orthogonal descriptor system, you describe everything and the
 
 
 Assuming we haven't created the database tables externally, Glorp's metamodel
-allows you to perform DDL \(_Data Definition Language_\) commands such as
-`CREATE TABLE` or `CREATE CONSTRAINT` \(among others\) using plain
+allows you to perform DDL (_Data Definition Language_) commands such as
+`CREATE TABLE` or `CREATE CONSTRAINT` (among others) using plain
 Pharo objects, and it can even determine when to run those.
 
 To do that we must first connect to the database. We will explain how to do so in the following sections.
@@ -527,7 +525,7 @@ test the support of certain features, and so on.
 
 In Pharo we have 
 `MySQLPlatform`, `OraclePlatform`, `PostgresPlatform`, `SQLServerPlatform`, `SQLite3Platform` and `UDBCSQLite3Platform`
-as subclass of `DatabasePlatform`.
+as a subclass of `DatabasePlatform`.
 
 
 
@@ -795,14 +793,14 @@ session commitUnitOfWork.
 
 The message `commitUnitOfWorkAndContinue` needs some explanation,
 but the concept is simple: It commits the current unit of work, and then
-creates a new one migrating all the objects registered in the commited unit of
+creates a new one migrating all the objects registered in the committed unit of
 work to the newly created, and still open, unit of work. If this paragraph
 confuses you, looking at its implementation might explain it better.
 
 It is useful for cases like batch loads or updates,
 where you want to commit changes every _n_ instances or similar.
 
-Commiting and continuing the Unit Of Work: 
+Committing and continuing the Unit Of Work: 
 ```
 session beginUnitOfWork.
 10 to: 99 do: [ :index |
@@ -834,9 +832,9 @@ session inUnitOfWorkDo: [
 ## Glorp Configurations and Additional Concepts
 
 
-In our previous example we created a simple class that mapped _1:1_ with a
+In our previous example, we created a simple class that mapped _1:1_ with a
 table using simple data types, but Glorp provides many more features than
-an _ActiveRecord_ like mapping. It lets you fine tune the persistence of
+an _ActiveRecord_ like mapping. It lets you fine-tune the persistence of
 your classes. We will go over the different configurations of class models,
 table data types and constraints and mappings of all sorts.
 
@@ -906,14 +904,12 @@ GlorpBookDescriptorSystem >> classModelForPerson: aClassModel
 
 
 Glorp also models your database objects, such as tables, constraints, indexes,
-etc.. With this model it will be able to determine how to serialize the objects to
+etc.. With this model, it will be able to determine how to serialize the objects to
 SQL, how to perform joins to retrieve 1:1 or 1:n relations, and so on.
 
 The descriptor system follows a convention to define the tables,
-it uses the `tableForTABLENAME:` selector to configure `TABLENAME`, the
-argument of this method is an instance of `DatabaseTable`, and this
-method is responsible for describing your table in the relational
-database, including field names and their data types, contraints \(primary keys
+it uses the `tableForTABLENAME:` selector to configure `TABLENAME`, the argument of this method is an instance of `DatabaseTable`, and this
+method is responsible for describing your table in the relational database, including field names and their data types, constraints \(primary keys
 and/or foreign keys\), etc.
 
 #### Adding fields to the table
@@ -934,7 +930,7 @@ As you can see, you can add a field by sending `createFieldNamed:type:` to
 the table object. The first argument of the method is name of the field
 \(aka _column_\) in your table, the second one is the datatype.
 
-For the datatype we're not specifying any particular implementation of the type
+For the datatype, we're not specifying any particular implementation of the type
 but instead we send a message to the _platform_ object, and in Glorp jargon
 the platform is the RDBMS we'll be using.
 
@@ -1011,7 +1007,7 @@ your class model you want to map to a field of a table.
 
 Although many times they will be the same symbol, the argument you pass to
 the `from:` parameter is not the symbol of the selector
-but instead the name of attribute you have defined in your `classModelFor...:`
+but instead, the name of the attribute you have defined in your `classModelFor...:`
 method.
 
 #### 1:1 relationships.
@@ -1038,7 +1034,7 @@ The Many to Many relationships is similar to the previous one, but in this case
 the other side of the relation might _belong_ to more than one owner.
 For instance, if you have Person and Tag, a Person might have many Tags,
 but these tags in turn belong to other instances of Person.
-In this case you use the `ManyToManyMapping` and also have to specify
+In this case, you use the `ManyToManyMapping` and also have to specify
 the _attributeName_.
 
 From your the Pharo point of view, you will continue to see a regular collection
@@ -1057,9 +1053,9 @@ convenience subclasses of `RelationshipMapping`, and as such they share
 common properties that can be modified.
 
 For instance, the only difference between `OneToManyMapping` and
-`ManyToManyMapping` is that the later is initialized to use a link table,
+`ManyToManyMapping` is that the latter is initialized to use a link table,
 but you can have a `OneToManyMapping` that uses a link table if you prefer,
-you simple send `useLinkTable` to it.
+you simply send `useLinkTable` to it.
 
 #### Reference Classes.
 
@@ -1069,11 +1065,11 @@ used a lot, and is a convenience method that ends up modifying the attribute
 in the ClassModel. So you can specify it at either place you find more
 convenient.
 
-Note we only define the class referenced, because the other side of the
+Note we only define the class referenced because the other side of the
 relationship is the class for which we're defining the mapping itself.
 
-Other attribute common to all `RelationshipMapping` subclasses is that
-you can specify how it is suppose to join with other tables, it is,
+Other attributes common to all `RelationshipMapping` subclasses is that
+you can specify how it is supposed to join with other tables, it is,
 its `Join` object. More on this on the advanced section.
 
 #### Exclusivity.
@@ -1134,7 +1130,7 @@ them believe they're something they're not!
 
 Now that we explained in more detail the main parts of Glorp's descriptor system,
 we're ready to extend our basic example, we're going to create a minimal
-invoicing model to include the concepts just learnt.
+invoicing model to include the concepts just learned.
 
 We will 
 - define new Pharo class
@@ -1403,7 +1399,7 @@ The `orderBy:` attribute instructs
 Glorp to read the elements from the database and _order_ \(aka _sort_\) them
 by the field described in the block. This is useful so the collection that holds
 the references to the items \(in this example\) is always sorted the same way,
-because the order the rows come from the database is not always the same,
+because the order of the rows comes from the database is not always the same,
 and you can't trust they will return in the same order as they were written.
 
 The `writeTheOrderField` command will make Glorp save the index of the
@@ -1670,14 +1666,14 @@ doesn't provide you with an API for that.
 ### The read: message
 
 Everytime you sent a `read:` message to the session, the session created a
-simple `Query` object to read the class passed as parameter as in the following expression. 
+simple `Query` object to read the class passed as a parameter as in the following expression. 
 
 ```
 (session read: Invoice) executeIn: session
 ```
 
 
-But you can instantiate a Query object independently, configure it to fit your needs and
+But you can instantiate a `Query` object independently, configure it to fit your needs and
 execute it in the session. Enter the `Query` object! 
 
 ### SimpleQuery
@@ -2274,7 +2270,7 @@ than in a `retrieve:` or `groupBy:`.
 
 Because it uses `doesNotUnderstand:` as a way to build the expression tree,
 it is possible that some selectors will be highlighted by Pharo as not
-implemented, in particular salectors that are used to instantiate
+implemented, in particular selectors that are used to instantiate
 `FunctionExpression`'s.
 
 ### About special selectors
@@ -2321,7 +2317,7 @@ of the subclasses of `FunctionExpression`. It achieves it by rebuilding
 the _archiver_ as it consumes the selectors, you can find how it does by
 looking for the implementors of `rebuildOn:startingFrom:withOuterScopeBase:`.
 
-In the middle of those implementors you'll find senders to
+In the middle of those implementors, you'll find senders to
 `getFunction:arguments:`, this in turn will query the _platform_
 for the list of functions available, which will end up creating
 the list of default functions by sending `createBasicFunctionsFor:`
@@ -2397,7 +2393,7 @@ entity integrity and referential integrity.
 
 A primary key uniquely specifies a tuple within a table. In order for an attribute to be a good primary key it must not repeat. While
 natural attributes \(attributes used to describe the data being entered\) are
-sometimes good primary keys, surrogate keys are often used instead.
+sometimes good primary keys, and surrogate keys are often used instead.
 
 A surrogate key is an artificial attribute assigned to an object which uniquely
 identifies it \(for instance, in a table of information about students at a
@@ -2484,7 +2480,7 @@ joins, right outer joins, and full outer joins, depending on which table's rows
 are retained \(left, right, or both\).
 
 The result of a left outer join \(or simply left join\) for tables A and B always
-contains all records of the "left" table \(A\), even if the join-condition does
+contains all records of the "left" table \(A\), even if the join condition does
 not find any matching record in the "right" table \(B\). This means that if the ON
 clause matches 0 \(zero\) records in B \(for a given record in A\), the join will
 still return a row in the result \(for that record\)—but with NULL in each column
@@ -2492,10 +2488,8 @@ from B. A left outer join returns all the values from an inner join plus all
 values in the left table that do not match to the right table, including rows
 with NULL \(empty\) values in the link field.
 
-For example, this allows us to find an employee's department, but still shows
-employees that have not been assigned to a department \(contrary to the
-inner-join example above, where unassigned employees were excluded from the
-result\).
+For example, this allows us to find an employee's department but still shows
+employees that have not been assigned to a department (contrary to the inner join example above, where unassigned employees were excluded from the result).
 
 ### Data manipulation language \(DML\) queries
 
